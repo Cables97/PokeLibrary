@@ -1,16 +1,18 @@
 <template>
-    <div class="content">
-      <h1>PokeList</h1>
+    
 
-      <div class="loading-screen" v-if="isLoading">
-        <img src="https://webstockreview.net/images/pikachu-clipart-pokeball-3.png" alt="">
-      </div>
+      <Transition>
+        <div class="loading-screen" v-if="isLoading">
+          <img src="../assets/Pokemon-Pokeball-PNG-HD-Image.png" alt="">
+        </div>
+      </Transition>
+
 
       <div class="list" v-if="!isLoading">
         <div v-for="pokemon in this.PokeListSorted" :key="pokemon.name" :id="pokemon.name" class="pokemon" @click="listClick(pokemon)">
           <p class="pokemon-id"># {{ pokemon.id }}</p>
   
-          <button class="pokeball-btn corner-btn" @click="addToParty"><img src="../assets/pokeball_inactive.png" alt=""></button>
+          <button class="pokeball-btn corner-btn" @click="addToParty"><img src="../assets/pokeball_active.png" alt=""></button>
           <button class="star-btn corner-btn" @click="addToFavourites"><i class="fa-regular fa-star fa-lg fa-white"></i></button>
   
           <img :src='pokemon.sprites.versions["generation-v"]["black-white"].animated.front_default || pokemon.sprites.front_default' onerror="this.src=''" class="pokemon-img-gif">
@@ -27,7 +29,7 @@
         </div>
       </div>
       
-    </div>
+    
   </template>
   
 
@@ -39,7 +41,7 @@
           return{
             url: 'https://pokeapi.co/api/v2/pokemon?limit=50&offset=0',
             csvContent: "data:text/csv;charset=utf-8,",
-            isLoading: false,
+            isLoading: true,
             pokeMasterList : [],
             displayList: [],
             loading: true,
@@ -69,14 +71,14 @@
 
         listClick(pokemonName){
           console.log(pokemonName);
-        }
+        },
+
       },
   
       computed: {
         
         PokeListSorted(){
-          this.displayList = this.pokeMasterList.sort((a, b) => { return a.id - b.id;});
-          return this.displayList
+          return this.pokeMasterList.sort((a, b) => { return a.id - b.id;});
         },
         
       },
@@ -85,11 +87,13 @@
         this.fetchPokemon()
         console.log(this.pokeMasterList)
       },
+      mounted() {
+        setTimeout(() => {
+          this.isLoading = false;
+        }, 750);
+      },
   }
   </script>
-
-
-
 
 
   <style>
@@ -99,16 +103,45 @@
     gap: 40px 15px;
     justify-content: center;
   }
-  
+
+  .v-enter-active,
+  .v-leave-active {
+    transition: transform 0.5s ease;
+  }
+
+  .v-enter-from,
+  .v-leave-to {
+    transform: translate(0, 1080px);
+  }
+
+
   .loading-screen{
-    position:fixed;
-    width: auto;
+    position:absolute;
     height:100%;
+    min-height:80vh;
+    display:grid;
     z-index: 99;
+    width:100%;
+    border-radius: 30px;
+    background-color: #444;
+    box-shadow: 0 0 100px 50px rgba(0, 0, 0, .50) inset;
   }
   .loading-screen img{
-    height:100%;
-    width:100%;
+    position: relative;
+    margin:auto;
+    height:auto;
+    width:20%;
+    animation: anim-spin 1s infinite;
+  }
+
+  @keyframes anim-spin {
+    0%{
+      transform: rotateZ(0deg);
+    }
+    100%{
+      transform: rotateZ(360deg);
+    }
+    
   }
   
   .pokemon{
@@ -119,7 +152,7 @@
     border-radius: 20px;
     height: 120px;
     width: 210px;
-    background-color: #222;
+    background-color: #333;
   }
 
   .types{
@@ -133,8 +166,23 @@
     border-radius: 20px;
     width:70px;
     height:28px;
+  }
+
+  .type-btn::after{
+    content:"";
+    position: absolute;
+    top:0;
+    left:0;
+    border-radius: 20px;
+    width:100%;
+    height:100%;
     box-shadow: 0 0 4px 2px rgba(0, 0, 0, .50) inset;
     background-image: linear-gradient(180deg, rgba(0,0,0,0%), rgba(0,0,0,25%));
+  }
+
+
+  .type-btn:hover{
+    cursor: default;
   }
   .wide-btn{
     width:120px;
@@ -167,6 +215,7 @@
     height:auto;
     max-width:120px;
     max-height:100px;
+    z-index: 999;
   }
   
   .pokemon-id{
@@ -189,14 +238,20 @@
     margin: 36px 0 6px;
   }
   
+
+
   .pokeball-btn {
     position: absolute;
     bottom:5px;
     right:5px;
   }
   
+  .pokeball-btn img {
+    filter: grayscale(100%);
+  }
+
   .pokeball-btn:hover img{
-    content:url("../assets/pokeball_active.png");
+    filter: grayscale(0%);
     cursor: pointer;
   }
   
@@ -226,7 +281,6 @@
     color: white;
   }
   
-  
   .pokemon:hover{
     box-shadow: 0 0 2px 2px rgba(255, 255, 255, .25);
   }
@@ -238,6 +292,7 @@
   .pokemon:hover > .pokemon-img{
     display:none;
   }
+
   .normal{
     background-color: #b3b3a4;
   }

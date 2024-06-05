@@ -12,23 +12,44 @@ export default {
 
 </script>
 
-<template class="content">
+<template>
   <header>
     <NavBar></NavBar>
   </header>
-
-  <PokeList />
+  <div class="content">
+    <PokeList />
+  </div>
+  
 </template>
 
 <style>
+:root{
+  --global-width: 60%;
+}
+
+
+  body{
+    background-color: #111;
+    box-shadow: 0 0 100px 50px rgba(0, 0, 0, .50) inset;
+  }
+  header{
+    background-color: #111;
+  }
+
   .content{
     position: relative;
-    width:60%;
+    width:var(--global-width);
     margin:auto;
+    padding-top:260px;
   }
+
+
   @media only screen and (max-width: 600px) {
+    :root{
+     --global-width: 100%;
+    }
     body{
-    width:100%;
+    width:var(--global-width);
     margin:auto;
   }
 }
