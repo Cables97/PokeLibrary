@@ -2,7 +2,7 @@
     <div class="nav">
 
         <nav class="nav-bar">
-            <input type="text" name="search-bar" id="search-bar" class="search-bar">
+            <input type="text" name="search-bar" id="search-bar" class="search-bar" placeholder="Pokemon Search...">
         </nav>
 
         <div class="nav-btns">
@@ -10,13 +10,13 @@
             <div name="typeSelect" id="typeSelect" class="dropdownBox" @click="isOpenType=true" @mouseout="isOpenType=false">
 
                 <div class="select-top-line" @mouseover="isOpenType=true">
-                    <p>Choose a Type to Filter</p>
+                    <p>Type</p>
                     <i class="fa-solid fa-square-caret-down fa-center"></i>
                 </div>
 
                 <div class="select-btns" v-if="isOpenType"  @mouseover="isOpenType=true" @mouseout="isOpenType=false">
 
-                    <div v-for="types in this.typeList" class="type-btn base-btn" :class="{'active' : this.filterTypeList.includes(types)},  types.toLowerCase() " @click="filterType(types)">
+                    <div v-for="types in this.typeList" class="type-btn base-btn" :class="{'active' : stateStorage.filterTypeList.includes(types)},  types.toLowerCase() " @click="filterType(types)">
                         <p>{{ types }}</p>
                     </div>
 
@@ -27,13 +27,13 @@
             <div name="statSelect" id="statSelect" class="dropdownBox" @click="isOpenStat=true" @mouseout="isOpenStat=false">
 
                 <div class="select-top-line" @mouseover="isOpenStat=true">
-                    <p>Choose a Stat to Filter</p>
+                    <p>Main Stat</p>
                     <i class="fa-solid fa-square-caret-down fa-center"></i>
                 </div>
 
                 <div class="select-btns" v-if="isOpenStat"  @mouseover="isOpenStat=true" @mouseout="isOpenStat=false">
 
-                    <div v-for="stat in this.statList" class="type-btn base-btn" :class="{'active' : this.filterStatList.includes(stat)},  stat" @click="filterStat(stat)">
+                    <div v-for="stat in this.statList" class="type-btn base-btn" :class="{'active' : stateStorage.filterStatList.includes(stat)},  stat" @click="filterStat(stat)">
                         <p>{{ stat }}</p>
                     </div>
 
@@ -41,32 +41,29 @@
 
             </div>
 
-
             <div name="genSelect" id="genSelect" class="dropdownBox" @click="isOpenGen=true" @mouseout="isOpenGen=false">
 
                 <div class="select-top-line" @mouseover="isOpenGen=true">
-                    <p>Choose a Gen to Filter</p>
+                    <p>Generation</p>
                     <i class="fa-solid fa-square-caret-down fa-center"></i>
                 </div>
 
                 <div class="select-btns" v-if="isOpenGen"  @mouseover="isOpenGen=true" @mouseout="isOpenGen=false">
-                    <div v-for="gen in this.genList" class="type-btn wide-btn base-btn" :class="{'active' : this.filterGenList.includes(gen)}, gen" @click="filterGen(gen)">
+                    <div v-for="gen in this.genList" class="type-btn wide-btn base-btn" :class="{'active' : stateStorage.filterGenList.includes(gen)}, gen" @click="filterGen(gen)">
                         <p >Generation {{ gen }}</p>
                     </div>
                 </div>
 
             </div>
 
-
-            <button>Egg Group Filter</button>
             <input type="checkbox" name="Babies" id="baby">
             <input type="checkbox" name="Legendarys" id="legendary">
         </div>
         
         <div class="filter-btn-box">
-            <div v-for="types in this.filterTypeList" class="filter-btn" @click="filterType(types)"><p>{{ types }}</p><i class="fa-solid fa-rectangle-xmark fa-md fa-center"></i></div>
-            <div v-for="stat in this.filterStatList" class="filter-btn"  @click="filterStat(stat)"><p>{{ stat }}</p><i class="fa-solid fa-rectangle-xmark fa-md fa-center"></i></div>
-            <div v-for="gen in this.filterGenList" class="filter-btn" @click="filterGen(gen)"><p>Generation {{ gen }}</p><i class="fa-solid fa-rectangle-xmark fa-md fa-center"></i></div>
+            <div v-for="types in stateStorage.filterTypeList" class="filter-btn" @click="filterType(types)"><p>{{ types }}</p><i class="fa-solid fa-rectangle-xmark fa-md fa-center"></i></div>
+            <div v-for="stat in stateStorage.filterStatList" class="filter-btn"  @click="filterStat(stat)"><p>{{ stat }}</p><i class="fa-solid fa-rectangle-xmark fa-md fa-center"></i></div>
+            <div v-for="gen in stateStorage.filterGenList" class="filter-btn" @click="filterGen(gen)"><p>Generation {{ gen }}</p><i class="fa-solid fa-rectangle-xmark fa-md fa-center"></i></div>
 
             <div class="reset filter-btn" v-if="isResetAll" @click="resetAll"><p>Reset Filters</p><i class="fa-solid fa-rectangle-xmark fa-md fa-center"></i></div>
         </div>
@@ -76,21 +73,22 @@
 </template>
 
 <script>
+import { stateStorage } from './dataStorage'
 
 export default {
+    
     data() {
         return {
-            typeList: ["Bug","Dark","Dragon","Electric","Fairy","Fighting","Fire","Flying","Ghost","Grass","Ground","Ice","Normal","Poison","Psychic","Rock","Steel","Water"],
-            filterTypeList:[],
-            isOpenType: true,
+            stateStorage,
 
-            statList: ["HP","Attack","Defense","Sp.Atk","Sp.Def","Speed"],
-            filterStatList: [],
-            isOpenStat: true,
+            typeList: ["bug","dark","dragon","electric","fairy","fighting","fire","flying","ghost","grass","ground","ice","normal","poison","psychic","rock","steel","water"],
+            isOpenType: false,
+
+            statList: ["hp","attack","defense","sp.atk","sp.def","speed"],
+            isOpenStat: false,
 
             genList: ["I","II","III","IV","V","VI","VII","VIII","IX",],
-            filterGenList: [],
-            isOpenGen: true,
+            isOpenGen: false,
             
             eggList: [],
             filterEggGroups: [],
@@ -105,34 +103,34 @@ export default {
         //filter methods
         filterType(type) {
             
-                console.log(type + "toggled")
+                console.log(type + " toggled")
                 this.isActive
-                if(!this.filterTypeList.includes(type)){
-                    this.filterTypeList.push(type)
+                if(!stateStorage.filterTypeList.includes(type)){
+                    stateStorage.filterTypeList.push(type)
                 }else{
-                    this.filterTypeList.splice(this.filterTypeList.indexOf(type), 1);
+                    stateStorage.filterTypeList.splice(stateStorage.filterTypeList.indexOf(type), 1);
                 
             }
         },
         filterStat(stat) {
             
-                this.isActive
-                console.log(stat + "toggled")
-                if(!this.filterStatList.includes(stat)){
-                    this.filterStatList.push(stat)
+            this.isActive
+                console.log(stat + " toggled")
+                if(!stateStorage.filterStatList.includes(stat)){
+                    stateStorage.filterStatList.push(stat)
                 }else{
-                    this.filterStatList.splice(this.filterStatList.indexOf(stat), 1);
+                    stateStorage.filterStatList.splice(stateStorage.filterStatList.indexOf(stat), 1);
                 
             }
         },
         filterGen(gen) {
             
                 this.isActive
-                console.log(gen + "toggled")
-                if(!this.filterGenList.includes(gen)){
-                    this.filterGenList.push(gen)
+                console.log(gen + " toggled")
+                if(!stateStorage.filterGenList.includes(gen)){
+                    stateStorage.filterGenList.push(gen)
                 }else{
-                    this.filterGenList.splice(this.filterGenList.indexOf(gen), 1);
+                    stateStorage.filterGenList.splice(stateStorage.filterGenList.indexOf(gen), 1);
                 
             }
         },
@@ -149,14 +147,14 @@ export default {
         },
         //reset
         resetAll(){
-            this.filterTypeList.length  = []
-            this.filterStatList.length = []
-            this.filterGenList.length = []
+            stateStorage.filterTypeList = []
+            stateStorage.filterStatList = []
+            stateStorage.filterGenList = []
         }
     },
     computed: {
         isResetAll(){
-            if(this.filterTypeList.length > 0 || this.filterStatList.length > 0 || this.filterGenList.length > 0){
+            if(stateStorage.filterTypeList.length > 0 || stateStorage.filterStatList.length > 0 || stateStorage.filterGenList.length > 0){
                 return true
             }
         },
@@ -180,7 +178,7 @@ export default {
     transform: translate(-50%,0);
     top:0;
     padding: 30px;
-    z-index: 9999;
+    z-index: 99;
     background-color: #222;
 }
 
@@ -205,7 +203,7 @@ export default {
 
 .nav-btns{
 
-    width:50%;
+    width:60%;
     margin:auto;
     display: flex;
     flex-direction: row;
@@ -220,7 +218,6 @@ export default {
     text-wrap: none;
 }
 
-
 .select-top-line{
     width:100%;
     display: flex;
@@ -231,7 +228,7 @@ export default {
 }
 
 .select-btns{
-    width:auto;
+    width:180px;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
@@ -281,45 +278,16 @@ export default {
 
 .filter-btn p{
     margin-right:20px;
+    text-transform: capitalize;
 }
 
 .filter-btn p:hover{
     cursor: default;
 }
 
-.I{
-    background-image: linear-gradient(135deg, #FF0000FF 39%, #FFFC00FF 50%, #073AFFFF 62%);
-}
 
-.II{
-    background-image: linear-gradient(135deg, #FFC200FF 39%, #00FFF7FF 50%, #C0C0C0FF 62%);
+.fa-center { 
+    line-height: inherit!important; vertical-align: middle; 
 }
-.III{
-    background-image: linear-gradient(135deg, #FF0000FF 39%, #20FF00FF 50%, #10008DFF 62%);
-}
-.IV{
-    background-image: linear-gradient(135deg, #E7F8FFFF 39%, #7E7E7EFF 50%, #FFCAEEFF 62%);
-}
-.V{
-    background-image: linear-gradient(135deg, #4B4B4BFF 25%, #BEBEBEFF 75%);
-}
-.VI{
-    background-image: linear-gradient(135deg, #86B5FFFF 25%, #FA5757FF 75%);
-}
-
-.VII{
-    background-image: linear-gradient(135deg, #FF8200FF 0%, #FFC386FF 25%, #A843F7FF 75%, #6102AFFF 100%);
-}
-
-.VIII{
-    background-image: linear-gradient(135deg, #00CDFFFF 25%, #AF022CFF 75%);
-}
-.IX{
-    background-image: linear-gradient(135deg, #FF00F1FF 25%, #AF0202FF 75%);
-}
-
-
-
-.fa-center { line-height: inherit!important; vertical-align: middle; }
 
 </style>
