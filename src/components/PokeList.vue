@@ -51,7 +51,7 @@
       data(){
           return{
             stateStorage,
-            url: 'https://pokeapi.co/api/v2/pokemon?limit=151&offset=0',
+            url: 'https://pokeapi.co/api/v2/pokemon?limit=256&offset=0',
             csvContent: "data:text/csv;charset=utf-8,",
             isLoading: true,
             isOpenModal: false,
@@ -121,6 +121,8 @@
                 this.pokeMasterList.forEach(pokemon =>{
                   pokemon["stats"].forEach (stat =>{
                     if(stateStorage.filterStatList.includes(stat["stat"]["name"])){
+                      console.log(pokemon["name"])
+                      console.log(stat)
                       if(stat["base_stat"] > 80){
                         if(!this.displayList.includes(pokemon)){
                           this.displayList.push(pokemon)

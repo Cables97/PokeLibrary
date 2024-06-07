@@ -34,7 +34,7 @@
                 <div class="select-btns" v-if="isOpenStat"  @mouseover="isOpenStat=true" @mouseout="isOpenStat=false">
 
                     <div v-for="stat in this.statList" class="type-btn base-btn" :class="{'active' : stateStorage.filterStatList.includes(stat)},  stat" @click="filterStat(stat)">
-                        <p>{{ stat }}</p>
+                        <p>{{ this.computedStats(stat) }}</p>
                     </div>
 
                 </div>
@@ -84,7 +84,7 @@ export default {
             typeList: ["bug","dark","dragon","electric","fairy","fighting","fire","flying","ghost","grass","ground","ice","normal","poison","psychic","rock","steel","water"],
             isOpenType: false,
 
-            statList: ["hp","attack","defense","sp.atk","sp.def","speed"],
+            statList: ["hp","attack","defense","special-attack","special-defense","speed"],
             isOpenStat: false,
 
             genList: ["I","II","III","IV","V","VI","VII","VIII","IX",],
@@ -120,8 +120,10 @@ export default {
                     stateStorage.filterStatList.push(stat)
                 }else{
                     stateStorage.filterStatList.splice(stateStorage.filterStatList.indexOf(stat), 1);
-                
-            }
+                }
+
+
+            console.log(stateStorage.filterStatList)
         },
         filterGen(gen) {
             
@@ -150,7 +152,26 @@ export default {
             stateStorage.filterTypeList = []
             stateStorage.filterStatList = []
             stateStorage.filterGenList = []
+        },
+        computedStats(stat){
+            switch(stat){
+                case "hp":
+                case "attack":
+                case "defense":
+                case "speed":
+                    return stat
+                break
+                case "special-attack":
+                    return "sp.atk"    
+                break
+                case "special-defense":
+                    return "sp.def"
+                break
+                default:
+                break
+            }
         }
+
     },
     computed: {
         isResetAll(){
@@ -162,7 +183,8 @@ export default {
             if(this.isOpenType){
                 return  true
             }
-        }
+        },
+
     },
     created() {
     },
@@ -228,13 +250,13 @@ export default {
 }
 
 .select-btns{
-    width:180px;
+    width:calc((70px + 20px)* 3);
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
     flex-wrap: wrap;
-    gap:10px;
-    padding:10px;
+    gap:10px 0px;
+    padding: 5px 10px;
     position:absolute;
     top:40px;
     left:10px;
@@ -286,8 +308,5 @@ export default {
 }
 
 
-.fa-center { 
-    line-height: inherit!important; vertical-align: middle; 
-}
 
 </style>

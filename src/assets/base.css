@@ -213,3 +213,8 @@ body {
   text-transform:uppercase;
   text-shadow: 1px 1px 1px black;
 }
+
+
+.fa-center { 
+  line-height: inherit!important; vertical-align: middle; 
+}

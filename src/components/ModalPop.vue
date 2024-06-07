@@ -18,29 +18,32 @@
                     <p>Description:</p>
                     <p>{{ this.currPokeSpecies.flavor_text_entries[2].flavor_text }}</p>
                 </div>
-
                 
                 <div class="modal-section" v-for="ability in this.enAbilities" :key="ability">
                     <p>Description:</p>
                     <p>{{ ability["effect"] }}</p>
                 </div>
 
-
             </div>
 
             <div class="modal-stats">
-                <div class="modal-tags"><span class="modal-tag">Starter</span></div>
+                <div class="modal-tags">
+                    <div class="modal-tag mt-baby" v-if="this.currPokeSpecies.is_baby"><i class="fa-solid fa-egg fa-md fa-center"></i><p>Baby</p></div>
+                    <div class="modal-tag mt-legend" v-if="this.currPokeSpecies.is_legendary"><i class="fa-solid fa-star-of-life fa-md fa-center"></i><p>Legendary</p></div>
+                </div>
 
                 <div class="modal-img-wrap">
                      <img :src='this.currentPokemon.sprites.versions["generation-v"]["black-white"].animated.front_default || pokemon.sprites.front_default' onerror="this.src=''" class="modal-img">
                      <div class="modal-img-shadow"></div>
-                     <div class="modal-img-st">Shiny</div>
+                     <div class="modal-img-st"><p>Shiny</p></div>
                 </div>
+
                 <div class="modal-types">
                     <div v-for="type in this.currentPokemon.types" :key="this.currentPokemon.id" :class="type.type.name" class="type-btn">
                         <p>{{ type.type.name }}</p>
                     </div>
                 </div>
+
                 <div class="stats-blocks">
                     <div class="info-block ib-s" >
                         <p class="info-block-value">{{this.currentPokemon.stats[0].base_stat}}</p>
@@ -94,7 +97,7 @@
                     
                     <div class="info-block ib-l" >
                             <p class="info-block-value">{{this.currPokeGrowthInfo["levels"][99]["experience"]}}</p>
-                            <p class="info-block-name">Max XP</p>
+                            <p class="info-block-name">Max XP - lvl 100</p>
                     </div>
 
                     
@@ -106,6 +109,7 @@
 
 
                  </div>
+
             </div>
         </div>
     </div>
@@ -115,92 +119,76 @@
 
 <script>
     export default {
-        data(){
-            return{
-                currPokeSpecies: {},
-                currPokeGrowthInfo: {},
-                isLoadingModal : true,
-                abilityList: [],
-                abilities: [],
-                
-            }
-        },
-        props:{
-            currentPokemon: Object
-        },
+    data() {
+        return {
+            currPokeSpecies: {},
+            currPokeGrowthInfo: {},
+            isLoadingModal: true,
+            abilityList: [],
+            abilities: [],
 
-        methods: {
-            fetchPokemonInfo(){
-                console.log('fetch pokemon info')
-                console.log(this.currentPokemon["name"])
-                fetch("https://pokeapi.co/api/v2/pokemon-species/" + this.currentPokemon["name"] )
+        };
+    },
+    props: {
+        currentPokemon: Object
+    },
+    methods: {
+        fetchPokemonInfo() {
+            console.log('fetch pokemon info');
+            console.log(this.currentPokemon["name"]);
+            fetch("https://pokeapi.co/api/v2/pokemon-species/" + this.currentPokemon["name"])
+                .then(response => response.json())
+                .then(data => this.currPokeSpecies = data);
+        },
+        fetchPokemonGrowth() {
+            console.log('fetch pokemon grow info');
+            fetch(this.currPokeSpecies["growth_rate"]["url"])
+                .then(response => response.json())
+                .then(data => this.currPokeGrowthInfo = data);
+        },
+        abilityGrab() {
+            this.currentPokemon.abilities.forEach(ability => {
+                fetch(ability["ability"]["url"])
                     .then(response => response.json())
-                    .then(data => this.currPokeSpecies = data)
-            },
-
-            fetchPokemonGrowth(){
-                console.log('fetch pokemon grow info')
-                fetch(this.currPokeSpecies["growth_rate"]["url"] )
-                    .then(response => response.json())
-                    .then(data => this.currPokeGrowthInfo = data)
-            },
-
-
-
-
-            abilityGrab(){
-                this.currentPokemon.abilities.forEach(ability =>{
-                    fetch(ability["ability"]["url"] )
-                        .then(response => response.json())
-                        .then(data => this.abilityList.push(data))
-
-                })
-            },
-
+                    .then(data => this.abilityList.push(data));
+            });
         },
-
-
-        computed: {
-            enAbilities(){
-                this.abilities = []
-                this.abilityList.forEach((item, index , full) =>{
-                    item.effect_entries.forEach( (entry, index , full) =>{
-                        if(entry.language.name === "en"){
-                            this.abilities.push(entry)
-                            console.log(entry)
-                            return this.abilities
-                        }
-                    })
-                })
-                console.log(this.abilities)
-            }
-             
-        },
-
-
-
-        beforeMount() {
-           
-            setTimeout(() => {
-                this.fetchPokemonInfo()
-            }, 250)
-
-            setTimeout(() => {
-                this.fetchPokemonGrowth()
-                console.log(this.currPokeSpecies)
-            }, 500)
-            setTimeout(() =>{
-                console.log(this.currPokeGrowthInfo)
-                this.abilityGrab()
-                this.isLoadingModal = false
-            }, 750)
-        },
-        mounted(){
-            setTimeout(() =>{
-                this.isLoadingModal = false
-            }, 750)
-        },
-    }
+    },
+    computed: {
+        enAbilities() {
+            this.abilities = [];
+            this.abilityList.forEach((item, index, full) => {
+                item.effect_entries.forEach((entry, index, full) => {
+                    if (entry.language.name === "en") {
+                        this.abilities.push(entry);
+                        console.log(entry);
+                        return this.abilities;
+                    }
+                });
+            });
+            console.log(this.abilities);
+        }
+    },
+    beforeMount() {
+        setTimeout(() => {
+            this.fetchPokemonInfo();
+        }, 250);
+        setTimeout(() => {
+            this.fetchPokemonGrowth();
+            console.log(this.currPokeSpecies);
+        }, 500);
+        setTimeout(() => {
+            console.log(this.currPokeGrowthInfo);
+            this.abilityGrab();
+            this.isLoadingModal = false;
+        }, 750);
+    },
+    mounted() {
+        setTimeout(() => {
+            this.isLoadingModal = false;
+        }, 750);
+    },
+}
 </script>
 
 <style>
@@ -263,14 +251,11 @@
     }
 
     /* Modal Info */
-
-
     .modal-id{
         margin-top:10px;
         font-size: 16px;
         line-height: 16px;
     }
-
     .modal-name{
         font-size: 60px;
         font-variant: small-caps;
@@ -292,16 +277,10 @@
         font-size: 16px;
         font-family: "Roboto", sans-serif;
     }
-
     .modal-section p:first-child{
         margin-left:1.5em;
         font-weight: 600;
     }
-
-
-
-
-
     .modal-types{
         margin: 10px auto;
         display: flex;
@@ -310,9 +289,6 @@
         gap:10px;
 
     }
-
-
-
     /* Modal stats */
     .modal-stats{
         height:100%;
@@ -331,6 +307,48 @@
         border-radius: 20px;
         background-image: linear-gradient(1deg, #CCB47FFF 0%, #CCB47FFF 20%, #ffefd5ff 25%, #ffefd5ff 90%, #B1EBFFFF 100%);
     }
+
+    .modal-tags{
+        display:flex;
+        flex-direction: row;
+        width:90%;
+        margin:5px auto;
+    }
+
+    .modal-tag{
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        border-radius: 20px;
+        padding:3px 8px;
+        border-radius: 10px 5px 5px 5px;
+        box-shadow: 0 0 4px 2px rgba(0, 0, 0, .50) inset;
+        background-image: linear-gradient(180deg, rgba(0,0,0,0%), rgba(0,0,0,25%));
+    }
+    .modal-tag i{
+    color: white;
+  }
+    .modal-tag p{
+        margin-left:10px;
+        text-align: center;
+        vertical-align: middle;
+        font-family: "Roboto", sans-serif;
+        font-weight: 600;
+        letter-spacing: 1px;
+        line-height: 28px;
+        font-size: 14px;
+        color: white;
+        text-transform:uppercase;
+        text-shadow: 1px 1px 1px black;
+    }
+    .mt-legend{
+        background-color: #e7d194;
+    }
+    .mt-baby{
+        background-color: #89CFC0;
+    }
+
 
     .modal-img {
         position: absolute;
