@@ -1,7 +1,14 @@
 import { reactive } from 'vue'
 
 export const stateStorage = reactive({
-  filterTypeList : [],
-  filterStatList: [],
-  filterGenList: [],
+    masterListLength: "0",
+    masterList: [],
+    filterTypeList : [],
+    filterStatList: [],
+    filterGenList: [],
+    caughtList:[],
+    favouriteList:[],
+    currentPokemon: {},
+
 })
+

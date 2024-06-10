@@ -6,7 +6,10 @@ export default {
   name: 'App',
   components: {
     NavBar, PokeList
-  }
+  },
+  methods: {
+
+  },
 }
 
 

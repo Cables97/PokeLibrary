@@ -1,18 +1,26 @@
 <template>
-    
+  <div class="buttons">
+    <button @click="clearLists()">Clear storage</button>
+    <button @click="logLists()">log Storage</button>
+  </div>
+
 
   <Transition>
     <div class="loading-screen" v-if="isLoading">
-      <img src="../assets/Pokemon-Pokeball-PNG-HD-Image.png" alt="">
+      <div class="loading-img-wrapper">
+        <img src="../assets/pokeball_PNG8.png" alt="">
+      </div>
+      
     </div>
   </Transition>
 
-  <div class="list" v-if="!isLoading">
-    <div v-for="pokemon in this.PokeListSorted" :key="pokemon.name" :id="pokemon.name" class="pokemon-card" @click="listClick(pokemon)">
+
+  <div class="list" >
+    <div v-for="pokemon in this.PokeListSorted" :key="pokemon.name" :id="pokemon.name" class="pokemon-card" @click="listClick(pokemon)" :alt="pokemon.name">
       <p class="pokemon-id"># {{ pokemon.id }}</p>
 
-      <button class="pokeball-btn corner-btn" @click="addToParty"><img src="../assets/pokeball_active.png" alt=""></button>
-      <button class="star-btn corner-btn" @click="addToFavourites"><i class="fa-regular fa-star fa-lg fa-white"></i></button>
+      <button class="pokeball-btn corner-btn" @click.stop.prevent="pushToCaught(pokemon)" ><img :class="{'not-caught' : !stateStorage.caughtList.includes(pokemon.name)}"  src="../assets/pokeball_active.png" alt=""></button>
+      <button class="star-btn corner-btn" @click.stop.prevent="pushToFavorites(pokemon)" :class="{'favourite' : stateStorage.favouriteList.includes(pokemon.name)}">&#9733</button>
 
       <img :src='pokemon.sprites.versions["generation-v"]["black-white"].animated.front_default || pokemon.sprites.front_default' onerror="this.src=''" class="pokemon-img-gif">
       <img :src='pokemon.sprites.front_default' :alt="pokemon.name" class="pokemon-img">
@@ -30,15 +38,12 @@
   
   <div class="modal-wrapper" v-if="isOpenModal">
 
-    <ModalPop :currentPokemon="currentPokemon"/>
+    <ModalPop/>
     
-
     <div class="modal-bg" @click="isOpenModal = false"></div>
-
 
   </div>
 
-    
 </template>
   
 
@@ -51,7 +56,11 @@
       data(){
           return{
             stateStorage,
-            url: 'https://pokeapi.co/api/v2/pokemon?limit=256&offset=0',
+
+            fetchStart: 30,
+            fetchScroll: 20,
+            fetchMax: 1025,
+            url: 'https://pokeapi.co/api/v2/pokemon?limit=' + this.fetchStart + '&offset=0',
             csvContent: "data:text/csv;charset=utf-8,",
             isLoading: true,
             isOpenModal: false,
@@ -72,39 +81,85 @@
       },
 
       methods: {
-        //pokemon List fetch. Gets / sorts pokemon based on ID
-        
-        fetchPokemon(){
-
-
-            fetch(this.url)
-            .then(response => response.json())
-            .then(data => 
-              data.results.forEach(element => {
-                fetch('https://pokeapi.co/api/v2/pokemon/' + element.name)
-                  .then(response => response.json())
-                  .then(data => this.pokeMasterList.push(data))}))
-          },
+        //pokemon List fetch. Gets / sorts pokemon based on ID      
+        async fetchPokemon(){
+          const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=' + this.fetchStart + '&offset=0')
+          const data = await res.json()
+                data.results.forEach(element => {
+                      fetch('https://pokeapi.co/api/v2/pokemon/' + element.name)
+                        .then(response => response.json())
+                        .then(data => {
+                          stateStorage.masterList.push(data)
+                        })
+                      })
+        },
       
         listClick(poke){
-          this.currentPokemon = poke
+          stateStorage.currentPokemon = poke
           this.isOpenModal = true
           console.log(poke);
         },
 
+        pushToFavorites(poke){
+          let pokeName = poke["name"]
+          console.log(pokeName + " Favourited!")
+            if(!stateStorage.favouriteList.includes(pokeName)){
+              stateStorage.favouriteList.push(pokeName)
+            }else{
+                stateStorage.favouriteList.splice(stateStorage.favouriteList.indexOf(pokeName), 1)
+            }
+            this.saveLists()
+
+        },
+
+        pushToCaught(poke){
+          let pokeName = poke["name"]
+          console.log(pokeName + "  Caught!")
+            if(!stateStorage.caughtList.includes(pokeName)){
+              stateStorage.caughtList.push(pokeName)
+            }else{
+                stateStorage.caughtList.splice(stateStorage.caughtList.indexOf(pokeName), 1)
+            }
+            this.saveLists()
+        },
+
+        toggleLoading(){
+          this.isLoading = false
+        },
+
+        saveLists(){
+          console.log('saving')
+          localStorage.setItem('favoriteList', JSON.stringify(stateStorage.favouriteList))
+          localStorage.setItem('caughtList', JSON.stringify(stateStorage.caughtList))
+        },
+
+        loadLists(){
+          console.log(localStorage.getItem('favoriteList'))
+          if (localStorage.getItem('favoriteList')) {stateStorage.favouriteList = JSON.parse(localStorage.getItem('favoriteList'))}
+          if (localStorage.getItem('caughtList')) {stateStorage.caughtList = JSON.parse(localStorage.getItem('caughtList'))}
+        },
+
+        logLists(){
+          console.log(localStorage.getItem('favoriteList'));
+          console.log(localStorage.getItem('caughtList'))
+        },
+
+        clearLists(){
+          localStorage.removeItem('favoriteList');
+          localStorage.removeItem('caughtList');
+        }
       },
 
       computed: {
         
         PokeListSorted(){
           this.displayList = []
-
           //checks if filter is active, if so, run through filter, otherwise show all
           if(stateStorage.filterTypeList.length > 0 || stateStorage.filterStatList.length > 0){
             //if filteredTypeList.length > 0, add matching type to list
             if(stateStorage.filterTypeList.length >= 0){
                 // for each pokemon with matching type, (if not in already) push to display pokemon
-                this.pokeMasterList.forEach(pokemon =>{
+                stateStorage.masterList.forEach(pokemon =>{
                   pokemon["types"].forEach (type =>{
                     if(stateStorage.filterTypeList.includes(type["type"]["name"])){
                       if(!this.displayList.includes(pokemon)){
@@ -114,15 +169,12 @@
                   })
                 })
             }
-
             //if filterStatList.length > 0, add matching type to list
             if(stateStorage.filterStatList.length >= 0){
                 // for each pokemon with matching type, (if not in already) push to display pokemon
-                this.pokeMasterList.forEach(pokemon =>{
+                stateStorage.masterList.forEach(pokemon =>{
                   pokemon["stats"].forEach (stat =>{
                     if(stateStorage.filterStatList.includes(stat["stat"]["name"])){
-                      console.log(pokemon["name"])
-                      console.log(stat)
                       if(stat["base_stat"] > 80){
                         if(!this.displayList.includes(pokemon)){
                           this.displayList.push(pokemon)
@@ -133,33 +185,43 @@
                 })
             }
           }else{
-            this.pokeMasterList.forEach(pokemon =>{
+            stateStorage.masterList.forEach(pokemon =>{
                 this.displayList.push(pokemon)
               })
           }
-        
           this.displayList.sort((a, b) => { return a.id - b.id;})
+
           return this.displayList
         },
         
       },
 
       created(){
+        this.loadLists()
         this.fetchPokemon()
         console.log(this.pokeMasterList)
       },
-      mounted() {
+
+      beforeUpdate() {
         setTimeout(() => {
-          this.isLoading = false;
-        }, 750);
+          this.toggleLoading()
+        }, 500);
       },
+
       components: { ModalPop }
   }
 </script>
 
 
 <style scoped>
-  .list{
+  .buttons{
+    position: absolute;
+    top:0;
+    left:-250px;
+
+  }
+
+.list{
     display: flex;
     flex-wrap: wrap;
     gap: 40px 15px;
@@ -178,20 +240,32 @@
 
   .loading-screen{
     position:absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    top:200px;
     height:100%;
     min-height:80vh;
-    display:grid;
-    z-index: 99;
     width:100%;
-    border-radius: 30px;
+    z-index: 99;
     background-color: #444;
     box-shadow: 0 0 100px 50px rgba(0, 0, 0, .50) inset;
+    border-radius: 30px;
   }
-  .loading-screen img{
-    position: relative;
-    margin:auto;
+  .loading-img-wrapper{
+    position: absolute;
+    margin:0;
     height:auto;
     width:20%;
+    top:20vh;
+    left:50%;
+    transform: translate(-50%,-50%);
+  }
+  .loading-img-wrapper img{
+    position: absolute;
+    margin:0;
+    height:auto;
+    width:100%;
     animation: anim-spin 1s infinite;
   }
 
@@ -201,7 +275,7 @@
     }
     100%{
       transform: rotateZ(360deg);
-    }
+    } 
     
   }
 
@@ -272,7 +346,7 @@
   }
   
   .pokemon-name{
-    font-family: "Roboto", sans-serif;
+    font-family: var(--text-font);
     text-transform: capitalize;
     font-weight: 700;
     font-size: 18px;
@@ -302,22 +376,39 @@
     bottom:5px;
     right:5px;
   }
-  
-  .pokeball-btn img {
+
+  .not-caught{
     filter: grayscale(100%);
+  }
+  
+  .caught{
+    filter: grayscale(0%);
   }
 
   .pokeball-btn:hover img{
-    filter: grayscale(0%);
     cursor: pointer;
   }
+
   
   .star-btn{
     position: absolute;
-    top:5px;
+    top:0px;
     right:5px;
+    font-size: 28px;
+    color:black;
+  }
+  .star-btn:hover{
+    color:gold;
+  }
+
+  .star-btn:hover img{
+    cursor: pointer;
   }
   
+  .favourite{
+    filter: brightness(200%);
+    color:gold;
+  }
  
   .corner-btn i{
     color: white;

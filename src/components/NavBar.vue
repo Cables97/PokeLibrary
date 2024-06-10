@@ -11,7 +11,7 @@
 
                 <div class="select-top-line" @mouseover="isOpenType=true">
                     <p>Type</p>
-                    <i class="fa-solid fa-square-caret-down fa-center"></i>
+                    <p>▼</p>
                 </div>
 
                 <div class="select-btns" v-if="isOpenType"  @mouseover="isOpenType=true" @mouseout="isOpenType=false">
@@ -28,7 +28,7 @@
 
                 <div class="select-top-line" @mouseover="isOpenStat=true">
                     <p>Main Stat</p>
-                    <i class="fa-solid fa-square-caret-down fa-center"></i>
+                    <p>▼</p>
                 </div>
 
                 <div class="select-btns" v-if="isOpenStat"  @mouseover="isOpenStat=true" @mouseout="isOpenStat=false">
@@ -45,7 +45,7 @@
 
                 <div class="select-top-line" @mouseover="isOpenGen=true">
                     <p>Generation</p>
-                    <i class="fa-solid fa-square-caret-down fa-center"></i>
+                    <p>▼</p>
                 </div>
 
                 <div class="select-btns" v-if="isOpenGen"  @mouseover="isOpenGen=true" @mouseout="isOpenGen=false">
@@ -61,11 +61,15 @@
         </div>
         
         <div class="filter-btn-box">
-            <div v-for="types in stateStorage.filterTypeList" class="filter-btn" @click="filterType(types)"><p>{{ types }}</p><i class="fa-solid fa-rectangle-xmark fa-md fa-center"></i></div>
-            <div v-for="stat in stateStorage.filterStatList" class="filter-btn"  @click="filterStat(stat)"><p>{{ stat }}</p><i class="fa-solid fa-rectangle-xmark fa-md fa-center"></i></div>
-            <div v-for="gen in stateStorage.filterGenList" class="filter-btn" @click="filterGen(gen)"><p>Generation {{ gen }}</p><i class="fa-solid fa-rectangle-xmark fa-md fa-center"></i></div>
+            <div v-for="types in stateStorage.filterTypeList" class="filter-btn" @click="filterType(types)"><p>{{ types }}</p><p>✖</p></div>
+            <div v-for="stat in stateStorage.filterStatList" class="filter-btn"  @click="filterStat(stat)"><p>{{ stat }}</p><p>✖</p></div>
+            <div v-for="gen in stateStorage.filterGenList" class="filter-btn" @click="filterGen(gen)"><p>Generation {{ gen }}</p><p>✖</p></div>
 
-            <div class="reset filter-btn" v-if="isResetAll" @click="resetAll"><p>Reset Filters</p><i class="fa-solid fa-rectangle-xmark fa-md fa-center"></i></div>
+            <div class="reset filter-btn" v-if="isResetAll" @click="resetAll"><p>Reset Filters</p><p>✖</p></div>
+        </div>
+
+        <div class="caught-count" >
+            <p >{{ stateStorage.caughtList.length }} / 1025</p>
         </div>
 
     </div>
@@ -101,15 +105,13 @@ export default {
 
     methods: {
         //filter methods
-        filterType(type) {
-            
+        filterType(type) {   
                 console.log(type + " toggled")
                 this.isActive
                 if(!stateStorage.filterTypeList.includes(type)){
                     stateStorage.filterTypeList.push(type)
                 }else{
                     stateStorage.filterTypeList.splice(stateStorage.filterTypeList.indexOf(type), 1);
-                
             }
         },
         filterStat(stat) {
@@ -225,7 +227,7 @@ export default {
 
 .nav-btns{
 
-    width:60%;
+    width:70%;
     margin:auto;
     display: flex;
     flex-direction: row;
@@ -291,6 +293,7 @@ export default {
     justify-content: space-between;
     border-radius: 10px;
     background-color: #333;
+    gap:20px;
 }
 
 .filter-btn:hover{
@@ -299,7 +302,6 @@ export default {
 }
 
 .filter-btn p{
-    margin-right:20px;
     text-transform: capitalize;
 }
 
@@ -307,6 +309,12 @@ export default {
     cursor: default;
 }
 
+
+.caught-count{
+    position: absolute;
+    right:100px;
+    bottom:50px;
+}
 
 
 </style>
