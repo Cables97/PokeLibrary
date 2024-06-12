@@ -114,11 +114,12 @@
 
         pushToFavorites(poke){
           let pokeName = poke["name"]
-          console.log(pokeName + " Favourited!")
             if(!stateStorage.favouriteList.includes(pokeName)){
               stateStorage.favouriteList.push(pokeName)
+              console.log(pokeName + " Favourited!")
             }else{
                 stateStorage.favouriteList.splice(stateStorage.favouriteList.indexOf(pokeName), 1)
+                console.log(pokeName + " no longer appreciated!")
             }
             saveLists()
 
@@ -126,17 +127,14 @@
 
         pushToCaught(poke){
           let pokeName = poke["name"]
-          console.log(pokeName + "  Caught!")
             if(!stateStorage.caughtList.includes(pokeName)){
               stateStorage.caughtList.push(pokeName)
+              console.log(pokeName + "  Caught!")
             }else{
                 stateStorage.caughtList.splice(stateStorage.caughtList.indexOf(pokeName), 1)
+                console.log(pokeName + "  Released into the wild!")
             }
             saveLists()
-        },
-
-        toggleLoading(){
-          this.isLoading = false
         },
 
       },
@@ -204,12 +202,13 @@
         logLists()
         loadLists()
         this.fetchPokemon()
-        console.log(this.pokeMasterList)
+        console.log(stateStorage.masterList)
+
       },
 
-      beforeUpdate() {
+      mounted() {
         setTimeout(() => {
-          this.toggleLoading()
+          this.isLoading = false
         }, 500);
       },
 
@@ -248,7 +247,7 @@
     justify-content: center;
     width:100%;
     z-index: 99;
-    background-color: #444;
+    background-color: var(--modal-background);
     box-shadow: 0 0 100px 50px rgba(0, 0, 0, .50) inset;
     border-radius: 30px;
   }
@@ -306,7 +305,7 @@
     flex-direction: column;
     align-items: center;
     border-radius: 20px;
-    background-color: #333;
+    background-color: var(--card-background);
   }
 
   .types{

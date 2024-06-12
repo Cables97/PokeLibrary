@@ -148,6 +148,13 @@
     </div>
 
     <div class="modal-wrapper-mobile" v-if="!isLoadingModal">
+
+        <div class="modal-close-btns" :class="{ 'm-c-b-raise' : !this.isLoadingModal }">
+            <button class="pokeball-btn corner-btn" @click.stop.prevent="pushToCaught(pokemon)" ><img :class="{'not-caught' : !stateStorage.caughtList.includes(this.currentPokemon.name)}"  src="./icons/pokeball_active.png" alt=""></button>
+            <button class="star-btn corner-btn" @click.stop.prevent="pushToFavorites(pokemon)" :class="{'favourite' : stateStorage.favouriteList.includes(this.currentPokemon.name)}">&#9733</button>
+            <!--<button class="star-btn corner-btn" @click="stateStorage.modalOpen = false">&#x2715;</button>-->
+        </div>
+
         <div class="m-modal-content">
 
             <div class="m-modal-img" @click="playCry()">
@@ -160,7 +167,7 @@
 
             <div class="modal-topline">
                     <h3 class="modal-id">ID: {{ this.currentPokemon["id"] }}    <span v-if="stateStorage.favouriteList.includes(currentPokemon.name)">&#9733</span></h3>
-                    <img v-if="stateStorage.caughtList.includes(currentPokemon.name)"  src="../assets/pokeball_active.png" alt="This pokemon has been caught" />
+                    <img v-if="stateStorage.caughtList.includes(currentPokemon.name)"  src="./icons/pokeball_active.png" alt="This pokemon has been caught" />
                 </div>
                 
                 <h1 class="modal-name">{{ this.currentPokemon["name"] }}</h1>
@@ -443,9 +450,6 @@
         height:calc(80% - 50px);
         width:90%;
         transform: translate(-50%,-50%);
-        background-color: var(--modal-background);
-        border-radius: 20px;
-        box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.5),0 0 20px 20px rgba(0, 0, 0, 0.25);
         z-index: 12;
     }
 
@@ -455,6 +459,10 @@
         align-items: center;
         padding:20px;
         height:100%;
+        z-index: 99;
+        background-color: var(--modal-background);
+        border-radius: 20px;
+        box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.5),0 0 20px 20px rgba(0, 0, 0, 0.25);
     }
 
     .m-modal-img{
@@ -465,7 +473,7 @@
         width: 160px;
         height:auto;
         aspect-ratio: 1;
-        border: 5px groove #444;
+        border: 5px ridge #444;
         margin: auto;
         border-radius: 40px;
         background-image: linear-gradient(1deg, #CCB47FFF 0%, #CCB47FFF 20%, #ffefd5ff 25%, #ffefd5ff 90%, #B1EBFFFF 100%);
@@ -492,7 +500,7 @@
         margin:10px 0;
         padding:10px;
         border-radius:10px;
-        background-color: #555;
+        background-color: var(--flavor-background);
         text-align: center;
     }
     .m-flavor p:first-child{
@@ -509,6 +517,25 @@
         z-index: 20;
     }
 
+    .modal-wrapper-mobile > .modal-close-btns{
+       position: absolute;
+       right:0;
+       top:-50px;
+       height: 60px;
+       background-color: var(--stat-background);
+       border-radius: 10px 10px 0 0 ;
+       border:2px solid var(--card-background);
+       z-index:-1;
+       display: flex;
+       flex-direction: row;
+       align-items: center;
+       gap:6px;
+       padding:0 6px 10px ;
+    }
+
+
+
+
     .modal-close-btns{
        position: absolute;
        right:0;
@@ -516,7 +543,7 @@
        height: 60px;
        background-color: var(--stat-background);
        border-radius: 10px 10px 0 0 ;
-       border:2px solid #333;
+       border:2px solid var(--card-background);
        z-index:-1;
        display: flex;
        flex-direction: row;
@@ -544,13 +571,15 @@
      /* Modal loading */
     .modal-loading{
         position:absolute;
+        height:100%;
+        width:100%;
         top:50%;
         left:50%;
         transform: translate(-50%,-50%);
         display:grid;
         z-index: 99999;
         border-radius: 30px;
-        background-color: #444;
+        background-color: var(--modal-background);
         box-shadow: 0 0 100px 50px rgba(0, 0, 0, .50) inset;
     }
 
@@ -584,7 +613,7 @@
         height:100%;
         background-color: var(--modal-background);
         border-radius: 20px;
-        border:2px solid #333;
+        border:2px solid var(--card-background);
         box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.5),0 0 20px 20px rgba(0, 0, 0, 0.25);
         z-index: 1239;
     }
@@ -635,7 +664,7 @@
         margin-top:10px;
         padding:10px;
         border-radius:10px 0 0 10px;
-        background-color: #555;
+        background-color: var(--flavor-background);
     }
 
     .flavor{
@@ -668,9 +697,9 @@
         bottom:-75%;
         left:20px;
         padding:10px;
-        background-color: #333;
+        background-color: var(--flavor-background);
         border-radius: 10px;
-        box-shadow: 5px 3px 5px 5px #222;
+        box-shadow: 5px 3px 5px 5px rgba(0, 0, 0, .50);
         z-index: 10;
     }
 
@@ -688,7 +717,7 @@
     .modal-stats{
         height:100%;
         width: 225px;
-        background-color: #555;
+        background-color: var(--flavor-background);
         border-radius: 0 20px 20px 0;
     }
     .stats-blocks{
@@ -713,7 +742,7 @@
         width: 90%;
         height:auto;
         aspect-ratio: 1;
-        border: 5px groove #444;
+        border: 5px groove var(--flavor-background);
         margin: auto;
         border-radius: 20px;
         background-image: linear-gradient(1deg, #CCB47FFF 0%, #CCB47FFF 20%, #ffefd5ff 25%, #ffefd5ff 90%, #B1EBFFFF 100%);
@@ -726,8 +755,8 @@
         left:2px;
         height: 30px;
         width: 30px;
-        background-color: #666;
-        border:2px solid #777;
+        background-color: var(--flavor-background);
+        border:2px solid var(--stat-border);
         border-radius: 50%;
     }
 
@@ -844,9 +873,9 @@
 
     .info-block{
         position: relative;
-        border:2px solid #777;
+        border:2px solid var(--stat-border);
         border-radius: 10px;
-        background-color: #666;
+        background-color: var(--stat-background);
         margin:auto;
         padding:0;
     }
@@ -924,8 +953,8 @@
         width:600px;
     }
     .modal-loading{
-        height:800px;
-        width:600px;
+        height:100%;
+        width:100%;
     }
 
         

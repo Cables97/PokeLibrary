@@ -32,17 +32,19 @@
 /* semantic color variables for this project */
 :root {
 
-  --body-background: #111;
-  --card-background: #333;
-  --modal-background: #444;
-  --stat-background:#666;
-  --stat-border: #777;
+  --body-background: #dedede;
+  --card-background: #fff;
+  --modal-background: #ddd;
+  --flavor-background: #ccc;
+  --stat-background:#bbb;
+  --stat-border: #aaa;
 
 
-  --text-light:rgba(235,235,235,0.64);
-  --text-dark:rgb(83, 83, 83);
+  --type-text:rgb(255, 255, 255);
 
-  --section-gap: 160px;
+  
+  --text-light:rgb(53, 53, 53);
+  --text-dark:rgb(32, 32, 32);
 
 
   --title-font:"Roboto", sans-serif;
@@ -51,13 +53,24 @@
 
   color:var(--text-light)
 
-
 }
 
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --body-background: #111;
+    --card-background: #333;
+    --modal-background: #444;
+    --flavor-background: #555;
+    --stat-background:#666;
+    --stat-border: #777;
+  
+  
+    --text-light:rgba(235,235,235,0.64);
+    --text-dark:rgb(83, 83, 83);
+  
 
+    color:var(--text-light)
   }
 }
 
@@ -102,7 +115,6 @@ body {
 
 .attack{ background-color:#10008DFF }
 .defense{ }
-
 
 .I{
   background-image: linear-gradient(135deg, #FF0000FF 39%, #FFFC00FF 50%, #073AFFFF 62%);
@@ -221,7 +233,7 @@ body {
   letter-spacing: 1px;
   line-height: 28px;
   font-size: 12px;
-  color: white;
+  color: var(--type-text);
   text-transform:uppercase;
   text-shadow: 1px 1px 1px black;
 }

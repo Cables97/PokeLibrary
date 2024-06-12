@@ -29,12 +29,12 @@ export default {
 
 
 body{
-    background-color: #111;
+    background-color: var(--body-background);
     box-shadow: 0 0 100px 50px rgba(0, 0, 0, .50) inset;
 }
 
 header{
-  background-color: #111;
+  background-color: var(--body-background);
   z-index: 99999;
 }
 

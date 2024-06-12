@@ -327,7 +327,7 @@ export default {
     padding: 5px 5px;
     z-index:10;
     border-radius: 15px;
-    background-color: #444;
+    background-color: var(--modal-background);
     border:1px solid var(--stat-border)
 }
 
@@ -343,9 +343,10 @@ export default {
     height:200px;
     padding: 30px;
     z-index: 999;
-    background-color: #222;
+    background-color: rgba(0, 0, 0, 0.2);
     width:var(--global-width);
     min-width:var(--global-min-width);
+    backdrop-filter: blur(12px);
 }
 
 .nav-bar{
@@ -372,11 +373,13 @@ export default {
     border-left:1px solid var(--text-dark);
     border-bottom: 1px solid var(--text-dark);
 }
+
+
 .search-bar:focus{
     outline:1px solid  var(--text-dark);
 }
 .search-bar::placeholder{
-    color:  var(--text-dark)
+    color:  var(--text-light)
 }
 
 .nav-btns{
@@ -389,7 +392,7 @@ export default {
 
 .dropdownBox{
     position: relative;
-    background-color: #444;
+    background-color: var(--modal-background);
     width:200px;
     border-radius: 15px;
     text-wrap: none;
@@ -417,7 +420,7 @@ export default {
     left:10px;
     z-index:10;
     border-radius: 20px;
-    background-color: #444;
+    background-color: var(--modal-background);
     box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.5),0 0 20px 20px rgba(0, 0, 0, 0.25) ;
     border:1px solid #555;
 }
@@ -445,7 +448,7 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     border-radius: 10px;
-    background-color: #333;
+    background-color: var(--card-background);
     gap:20px;
 }
 
@@ -466,13 +469,13 @@ export default {
 .check-btn{
     height: 44px;
     width:60px;
-    background-color: #444;
+    background-color: var(--modal-background);
     border-radius: 15px;
     border:none;
 }
 .check-btn > div{
     position: relative;
-    background-color:#777;
+    background-color:var(--stat-border);
     width:20px;
     height:16px;
     margin:auto;
@@ -530,7 +533,7 @@ export default {
         flex-direction: row;
         justify-content: space-between;
         border-radius: 10px;
-        background-color: #333;
+        background-color: var(--card-background);
         gap:5px;
     }
 }
@@ -562,7 +565,7 @@ export default {
     }
     .dropdownBox{
         position: relative;
-        background-color: #444;
+        background-color: var(--modal-background);
         width:140px;
         border-radius: 15px;
         text-wrap: none;
