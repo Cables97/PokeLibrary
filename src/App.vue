@@ -19,41 +19,106 @@ export default {
   <header>
     <NavBar></NavBar>
   </header>
-  <div class="content">
+  <div class="pokemon-list-container">
     <PokeList />
   </div>
   
 </template>
 
 <style>
-:root{
-  --global-width: 60%;
-}
 
 
-  body{
+body{
     background-color: #111;
     box-shadow: 0 0 100px 50px rgba(0, 0, 0, .50) inset;
-  }
-  header{
-    background-color: #111;
-  }
+}
 
-  .content{
-    position: relative;
-    width:var(--global-width);
-    margin:auto;
-    padding-top:260px;
-  }
+header{
+  background-color: #111;
+  z-index: 99999;
+}
+
+.pokemon-list-container{
+  position: relative;
+  width:var(--global-width);
+  min-width: var(--global-min-width);
+  margin:auto;
+  padding-top:260px;
+}
 
 
-  @media only screen and (max-width: 600px) {
-    :root{
+
+/* Mobile */
+@media only screen and (max-width: 600px) {
+  :root{
      --global-width: 100%;
+     --global-min-width: 375px;
     }
-    body{
-    width:var(--global-width);
+  body{
+    width:100%;
+    height:100%;
     margin:auto;
+  }
+  .pokemon-list-container{
+    width:var(--global-width);
+    min-width: var(--global-min-width);
+    padding-top:160px;
   }
 }
+
+/* Tablet */
+@media only screen and (min-width: 600px) {
+    :root{
+     --global-width: 100%;
+     --global-min-width: 600px;
+    }
+  body{
+    width:100%;
+    height:100%;
+    margin:auto;
+  }
+  .pokemon-list-container{
+    width:100%;
+    min-width: var(--global-min-width);
+    padding-top:160px;
+  }
+}
+
+/* Tablet */
+  @media only screen and (min-width: 768px) {
+    :root{
+     --global-width: 100%;
+     --global-min-width: 768px;
+    }
+  body{
+    width:100%;
+    height:100%;
+    margin:auto;
+  }
+  .pokemon-list-container{
+    width:100%;
+    min-width: var(--global-min-width);
+    padding-top:260px;
+  }
+}
+
+/* Desktop */
+@media only screen and (min-width: 1200px) {
+  :root{
+     --global-width: 60%;
+     --global-min-width: 1142px;
+    }
+
+  body{
+    width:100%;
+    height:100%;
+    margin:auto;
+  }
+  .pokemon-list-container{
+    width:var(--global-width);
+    min-width: var(--global-min-width);
+    padding-top:260px;
+  }
+}
+
 </style>

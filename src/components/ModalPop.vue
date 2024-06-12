@@ -1,19 +1,26 @@
 <template>
 
     <Transition>
-        <div class="modal-loading" v-if="isLoadingModal">
-            <img src="../assets/Pokemon-Pokeball-PNG-HD-Image.png" alt="">
+        <div class="modal-loading" v-if="this.isLoadingModal">
+            <img src="./icons/Pokemon-Pokeball-PNG-HD-Image.png" alt="">
         </div>
     </Transition>
 
-    <div class="modal-info" v-if="!isLoadingModal">
+
+    <div class="modal-wrapper-desk" v-if="!this.isLoadingModal">
+
+        <div class="modal-close-btns" :class="{ 'm-c-b-raise' : !this.isLoadingModal }">
+            <button class="pokeball-btn corner-btn" @click.stop.prevent="pushToCaught(pokemon)" ><img :class="{'not-caught' : !stateStorage.caughtList.includes(this.currentPokemon.name)}"  src="./icons/pokeball_active.png" alt=""></button>
+            <button class="star-btn corner-btn" @click.stop.prevent="pushToFavorites(pokemon)" :class="{'favourite' : stateStorage.favouriteList.includes(this.currentPokemon.name)}">&#9733</button>
+            <button class="star-btn corner-btn" @click="stateStorage.modalOpen = false">&#x2715;</button>
+        </div>
+
         <div class="modal-content">
             
             <div class="modal-text">
                 <div class="modal-topline">
                     <h3 class="modal-id">ID: {{ this.currentPokemon["id"] }}    <span v-if="stateStorage.favouriteList.includes(currentPokemon.name)">&#9733</span></h3>
-                    <img v-if="stateStorage.caughtList.includes(currentPokemon.name)"  src="../assets/pokeball_active.png" alt="This pokemon has been caught" />
-                    <button @click="switchPokemon('charizard')" >Charizard</button>
+                    <img v-if="stateStorage.caughtList.includes(currentPokemon.name)"  src="./icons/pokeball_active.png" alt="This pokemon has been caught" />
                 </div>
                 
                 <h1 class="modal-name">{{ this.currentPokemon["name"] }}</h1>
@@ -47,11 +54,10 @@
                      <img :src='this.currentPokemon.sprites.versions["generation-v"]["black-white"].animated.front_default || pokemon.sprites.front_default' onerror="this.src=''" class="modal-img" :alt="this.currentPokemon.name">
                      <div class="modal-img-shadow"></div>
                      <div class="modal-img-cry" @click="playCry()"><img src="./icons/icons8-audio-wave-50.png" alt=""></div>
-                     <div class="modal-img-st"><p>Shiny</p></div>
                 </div>
 
                 <div class="modal-types">
-                    <div v-for="type in this.currentPokemon.types" :key="this.currentPokemon.id" :class="type.type.name" class="type-btn">
+                    <div v-for="type in this.currentPokemon.types" :key="type.type.name" :class="type.type.name" class="type-btn">
                         <p>{{ type.type.name }}</p>
                     </div>
                 </div>
@@ -124,20 +130,104 @@
                         <p class="info-block-name">Egg Groups</p>
                     </div>
 
-                    <div class="info-block ib-lt" >
+                    <div class="info-block ib-lt" v-if="this.currPokeSpecies.evolves_from_species" >
                         <p class="info-block-info">{{ this.currPokeSpecies["evolves_from_species"]["name"] }}</p>
-                        <p class="info-block-value">{{ this.currPokeSpecies["evolves_from_species"]["name"] }}</p>
+                        <img v-if="!this.missingEvo" :src="this.evolvesFrom" alt="" @click="switchPokemon(this.currPokeSpecies.evolves_from_species.name)">
+                        <img v-if="this.missingEvo" src="./icons/Missingno_RB.png" alt="" @click="switchPokemon(this.currPokeSpecies.evolves_from_species.name)">
                         <p class="info-block-name">Evolves From:</p>
                     </div>
 
                     <div class="info-block ib-l" >
-                        <p class="info-block-value">{{this.currPokeGrowthInfo["levels"][99]["experience"]}}</p>
+                        <p class="info-block-value">Generation <span class="cap">{{this.firstAppearance}}</span></p>
                         <p class="info-block-name">First Appearance:</p>
                     </div>
 
                  </div>
-
             </div>
+        </div>
+    </div>
+
+    <div class="modal-wrapper-mobile" v-if="!isLoadingModal">
+        <div class="m-modal-content">
+
+            <div class="m-modal-img" @click="playCry()">
+                
+                <img :src='this.currentPokemon.sprites.versions["generation-v"]["black-white"].animated.front_default || pokemon.sprites.front_default' onerror="this.src=''" class="modal-img" :alt="this.currentPokemon.name">
+                <div class="modal-img-shadow"></div>
+                <div class="modal-img-st"><p>Shiny</p></div>
+                
+            </div>
+
+            <div class="modal-topline">
+                    <h3 class="modal-id">ID: {{ this.currentPokemon["id"] }}    <span v-if="stateStorage.favouriteList.includes(currentPokemon.name)">&#9733</span></h3>
+                    <img v-if="stateStorage.caughtList.includes(currentPokemon.name)"  src="../assets/pokeball_active.png" alt="This pokemon has been caught" />
+                </div>
+                
+                <h1 class="modal-name">{{ this.currentPokemon["name"] }}</h1>
+                <h3 class="modal-subname">{{ this.currPokeSpecies["genera"][7]["genus"] }}</h3>
+
+                <div class="modal-types">
+                    <div v-for="type in this.currentPokemon.types" :key="type.type.name" :class="type.type.name" class="type-btn">
+                        <p>{{ type.type.name }}</p>
+                    </div>
+                </div>
+
+
+                <div class="m-flavor">
+                    <p>Pokedex Entry:</p>
+                    <p>{{ this.currPokeSpecies.flavor_text_entries[2].flavor_text }}</p>
+                </div>
+
+                <div class="m-stats">
+                    <div class="info-block ib-s" >
+                        <p class="info-block-value">{{this.currentPokemon.stats[0].base_stat}}</p>
+                        <p class="info-block-name">HP</p>
+                    </div> 
+
+                    <div class="info-block ib-s">
+                        <p class="info-block-value">{{this.currentPokemon.stats[1].base_stat}}</p>
+                        <p class="info-block-name">ATK</p>
+                    </div>
+
+                    <div class="info-block ib-s">
+                        <p class="info-block-value">{{this.currentPokemon.stats[2].base_stat}}</p>
+                        <p class="info-block-name">SP.ATK</p>
+                    </div>
+
+                    <div class="info-block ib-s">
+                        <p class="info-block-value">{{this.currentPokemon.stats[5].base_stat}}</p>
+                        <p class="info-block-name">SPEED</p>
+                    </div>
+
+                    <div class="info-block ib-s">
+                        <p class="info-block-value">{{this.currentPokemon.stats[3].base_stat}}</p>
+                        <p class="info-block-name">DEF</p>
+                    </div>
+
+                    <div class="info-block ib-s">
+                        <p class="info-block-value">{{this.currentPokemon.stats[4].base_stat}}</p>
+                        <p class="info-block-name">SP.DEF</p>
+                    </div>
+
+                    <div class="info-block ib-m" >
+                            <p class="info-block-value">{{this.currentPokemon.height / 10}} m</p>
+                            <p class="info-block-name">Height</p>
+                    </div>
+                    <div class="info-block ib-m" >
+                            <p class="info-block-value">{{this.currentPokemon.weight / 10}} kg</p>
+                            <p class="info-block-name">Weight</p>
+                    </div>
+
+                    <div class="info-block ib-m" >
+                        <p class="info-block-value">{{this.currPokeSpecies["base_happiness"]}}</p>
+                        <p class="info-block-name">Base Happy</p>
+                    </div>
+
+                    <div class="info-block ib-m" >
+                        <p class="info-block-value">{{this.currPokeSpecies["capture_rate"]}}</p>
+                        <p class="info-block-name">Catch Rate</p>
+                    </div>
+                </div>
         </div>
     </div>
 
@@ -145,7 +235,7 @@
 </template>
 
 <script>
-  import { stateStorage } from './dataStorage'
+  import { stateStorage , saveLists , loadLists } from './dataStorage'
 
     export default {
     data() {
@@ -154,7 +244,9 @@
             currentPokemon: stateStorage.currentPokemon,
             currPokeSpecies: {},
             currPokeGrowthInfo: {},
+
             isLoadingModal: true,
+
             abilityList: [],
             abilities: [],
 
@@ -166,6 +258,7 @@
             half_damage_from: [],
             double_damage_from: [],
             
+            missingEvo:false,
 
         };
     },
@@ -175,6 +268,8 @@
         async fetchPokeDex() {
             console.log('fetch pokemon info');
             console.log(this.currentPokemon["name"]);
+            this.abilityList=[]
+
 
             const species = await fetch("https://pokeapi.co/api/v2/pokemon-species/" + this.currentPokemon["name"])
             const specData = await species.json()
@@ -219,7 +314,6 @@
                         })
                     })
             })
-            console.log(this.weakVs)
 
         },
 
@@ -229,14 +323,44 @@
         },
 
         switchPokemon(pokeName){
-            const pokeObj = stateStorage.masterList.find(item => item.name === pokeName);
-            this.currentPokemon = pokeObj
+            if(!this.missingEvo){
+                const pokeObj = stateStorage.masterList.find(item => item.name === pokeName);
+                this.currentPokemon = pokeObj
+                this.fetchPokeDex()
+            }
+            else{
+                console.log("error: Pokemon pre-evolution is missing.")
+            }
+
         },
 
+        pushToFavorites(){
+          let pokeName = this.currentPokemon["name"]
+          console.log(pokeName + " Favourited!")
+            if(!stateStorage.favouriteList.includes(pokeName)){
+              stateStorage.favouriteList.push(pokeName)
+            }else{
+                stateStorage.favouriteList.splice(stateStorage.favouriteList.indexOf(pokeName), 1)
+            }
+            saveLists()
+
+        },
+
+        pushToCaught(){
+          let pokeName = this.currentPokemon["name"]
+          console.log(pokeName + "  Caught!")
+            if(!stateStorage.caughtList.includes(pokeName)){
+              stateStorage.caughtList.push(pokeName)
+            }else{
+                stateStorage.caughtList.splice(stateStorage.caughtList.indexOf(pokeName), 1)
+            }
+            saveLists()
+        },
     },
     computed: {
         enAbilities() { // abilitys are sent with multiple languages, need to return english only
             //for each ability 
+            this.abilities=[]
             console.log(this.abilityList)
             console.log("ability")
             this.abilityList.forEach(ability => {
@@ -273,43 +397,158 @@
             
             console.log(this.abilities)
             return this.abilities
+        },
+        firstAppearance() {
+            let replace = this.currPokeSpecies.generation.name.replace(/generation-/gi, "")
+            return replace
+        },
+        evolvesFrom(){
+            let pre = this.currPokeSpecies["evolves_from_species"]["name"]
+            let find = stateStorage.masterList.findIndex((element) => element.name == pre)
+            console.log()
+            if(find > -1){
+                this.missingEvo = false
+                return stateStorage.masterList[find].sprites.front_default
+            }else{
+                return this.missingEvo = true
+            }
+
         }
     },
     beforeMount() {
         this.fetchPokeDex();
     },
-
     mounted() {
         setTimeout(() => {
             this.isLoadingModal = false;
         }, 750);
     },
+    beforeUpdate(){
+        //this.isLoadingModal = true;
+    },
+    updated(){
+        setTimeout(() => {
+            this.isLoadingModal = false;
+        }, 750);
+    }
 }
 </script>
 
-<style scoped>
- /* Base Modal info */
-    .modal-info{
+<style >
+    .modal-wrapper-mobile{
         position: absolute;
         top:50%;
         left:50%;
+        margin-top:100px;
+        height:calc(80% - 50px);
+        width:90%;
         transform: translate(-50%,-50%);
-        height:800px;
-        width:600px;
-        background-color: #444;
+        background-color: var(--modal-background);
         border-radius: 20px;
         box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.5),0 0 20px 20px rgba(0, 0, 0, 0.25);
         z-index: 12;
     }
+
+    .m-modal-content{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding:20px;
+        height:100%;
+    }
+
+    .m-modal-img{
+        position: absolute;
+        top:-60px;
+        left:50%;
+        transform: translate(-50%,-50%);
+        width: 160px;
+        height:auto;
+        aspect-ratio: 1;
+        border: 5px groove #444;
+        margin: auto;
+        border-radius: 40px;
+        background-image: linear-gradient(1deg, #CCB47FFF 0%, #CCB47FFF 20%, #ffefd5ff 25%, #ffefd5ff 90%, #B1EBFFFF 100%);
+        -webkit-appearance: none;
+    }
+
+    .m-modal-img  .modal-img {
+        height:80%;
+    }
+
+    .m-stats{
+        position: relative;
+        width: 90%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 5px;
+        row-gap: 10px;
+    }
+
+    .m-flavor{
+        position: relative;
+        margin:10px 0;
+        padding:10px;
+        border-radius:10px;
+        background-color: #555;
+        text-align: center;
+    }
+    .m-flavor p:first-child{
+        font-size:18px;
+        font-weight: 600;
+    }
+
+    /*  */
+    .modal-wrapper-desk{
+        position: absolute;
+        top:50%;
+        left:50%;
+        transform: translate(-50%,-50%);
+        z-index: 20;
+    }
+
+    .modal-close-btns{
+       position: absolute;
+       right:0;
+       top:-50px;
+       height: 60px;
+       background-color: var(--stat-background);
+       border-radius: 10px 10px 0 0 ;
+       border:2px solid #333;
+       z-index:-1;
+       display: flex;
+       flex-direction: row;
+       align-items: center;
+       gap:12px;
+       padding:0 12px 10px ;
+       transition: all 5s;
+       transform: translate(0, 50px);
+    }
+
+    .m-c-b-raise{
+    animation: raise .67s ease-out forwards;
+    }
+
+    @keyframes raise {
+        10%{
+            transform: translate(0, 50px);
+        }
+
+        100% {
+            transform: translate(0, 0);
+        }
+    }
+
+     /* Modal loading */
     .modal-loading{
         position:absolute;
         top:50%;
         left:50%;
         transform: translate(-50%,-50%);
-        height:800px;
-        width:600px;
         display:grid;
-        z-index: 99;
+        z-index: 99999;
         border-radius: 30px;
         background-color: #444;
         box-shadow: 0 0 100px 50px rgba(0, 0, 0, .50) inset;
@@ -323,7 +562,6 @@
         animation: anim-spin 1s infinite;
     }
 
-     /* Modal loading */
     .v-enter-active,
     .v-leave-active {
         transition: transform 0.5s ease;
@@ -335,7 +573,6 @@
     }
 
 
-
     /* Modal Content */
 
      .modal-content{
@@ -345,6 +582,11 @@
         padding:20px;
         justify-content: space-between;
         height:100%;
+        background-color: var(--modal-background);
+        border-radius: 20px;
+        border:2px solid #333;
+        box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.5),0 0 20px 20px rgba(0, 0, 0, 0.25);
+        z-index: 1239;
     }
 
     /* Modal Info */
@@ -363,7 +605,7 @@
     .modal-id span{
         font-size: 26px;
         filter: brightness(200%);
-    color:gold;
+        color:gold;
     }
 
     .modal-name{
@@ -398,10 +640,6 @@
 
     .flavor{
         margin-bottom: 20px;
-    }
-
-    .flavor p{
-        
     }
 
     .ability-name{
@@ -445,34 +683,6 @@
 
     }
 
-    /* Strength boxes */
-
-    .str-weak{
-        width:100%;
-        border:1px solid red;
-        display: flex;
-        flex-direction: row;
-        gap:10px;
-    }
-
-    .sw-side{
-        display: flex;
-        flex-direction: column;
-        flex-wrap: wrap;
-    }
-
-    .sw-block{
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        flex-wrap: wrap;
-        border:2px solid #777;
-        border-radius: 10px;
-        background-color: #666;
-        margin:auto;
-        padding:0;  
-    }
-
 
     /* Modal stats */
     .modal-stats{
@@ -481,7 +691,23 @@
         background-color: #555;
         border-radius: 0 20px 20px 0;
     }
+    .stats-blocks{
+        position: relative;
+        width: 90%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 5px;
+        row-gap: 10px;
+        margin:20px auto;
+    }
+    .cap{
+        text-transform: uppercase;
+    }
 
+
+/* Modal Img + Cry */
     .modal-img-wrap{
         position: relative;
         width: 90%;
@@ -491,6 +717,7 @@
         margin: auto;
         border-radius: 20px;
         background-image: linear-gradient(1deg, #CCB47FFF 0%, #CCB47FFF 20%, #ffefd5ff 25%, #ffefd5ff 90%, #B1EBFFFF 100%);
+        -webkit-appearance: none;
     }
 
     .modal-img-cry{
@@ -518,61 +745,6 @@
         width: 24px;
     }
 
-/* Pokemon Tags */
-    .modal-tags{
-        display:flex;
-        flex-direction: row;
-        width:90%;
-        margin:5px auto;
-    }
-
-    .mt-img{
-        padding:0;
-        margin:0;
-        height:20px;
-        fill: red;
-    }
-
-    
-    .modal-tag{
-        position: relative;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        border-radius: 20px;
-        padding:3px 8px;
-        border-radius: 10px 5px 5px 5px;
-        box-shadow: 0 0 4px 2px rgba(0, 0, 0, .50) inset;
-        background-image: linear-gradient(180deg, rgba(0,0,0,0%), rgba(0,0,0,25%));
-    }
-    .modal-tag i{
-    color: white;
-  }
-    .modal-tag p{
-        margin-left:5px;
-        text-align: center;
-        vertical-align: middle;
-        font-family: var(--text-font);
-        font-weight: 600;
-        letter-spacing: 1px;
-        line-height: 28px;
-        font-size: 14px;
-        color: white;
-        text-transform:uppercase;
-        text-shadow: 1px 1px 1px black;
-    }
-
-    .mt-mythic{
-        background-color: #ca9bf7;
-    }
-    .mt-legend{
-        background-color: #e7d194;
-    }
-    .mt-baby{
-        background-color: #89CFC0;
-    }
-
     .modal-img {
         position: absolute;
         top:50%;
@@ -594,27 +766,71 @@
         box-shadow: 0 0 5px 2px #444;
         opacity: 50%;
     }
-    /* Stat Blocks */
+    
 
-    .stats-blocks{
+    /* ~~Reused~~ */
+
+/* Pokemon Tags */
+    .modal-tags{
+        display:flex;
+        flex-direction: row;
+        width:90%;
+        margin:5px auto;
+    }
+
+    .mt-img{
+        padding:0;
+        margin:0;
+        height:20px;
+        fill: red;
+    }
+    .modal-tag{
         position: relative;
-        width: 90%;
         display: flex;
         flex-direction: row;
-        flex-wrap: wrap;
         justify-content: space-between;
-        gap: 5px;
-        row-gap: 10px;
-        margin:20px auto;
+        align-items: center;
+        border-radius: 20px;
+        padding:3px 8px;
+        border-radius: 10px 5px 5px 5px;
+        box-shadow: 0 0 4px 2px rgba(0, 0, 0, .50) inset;
+        background-image: linear-gradient(180deg, rgba(0,0,0,0%), rgba(0,0,0,25%));
+    }
+    .modal-tag p{
+        margin-left:5px;
+        text-align: center;
+        vertical-align: middle;
+        font-family: var(--text-font);
+        font-weight: 600;
+        letter-spacing: 1px;
+        line-height: 28px;
+        font-size: 14px;
+        color: white;
+        text-transform:uppercase;
+        text-shadow: 1px 1px 1px black;
+    }
+    .mt-mythic{
+        background-color: #ca9bf7;
+    }
+    .mt-legend{
+        background-color: #e7d194;
+    }
+    .mt-baby{
+        background-color: #89CFC0;
+    }
+/* Stat Blocks */
+    .ib-xs{
+        width:calc((100% / 6) - 5px );
+        height:40px;
     }
 
     .ib-s{
-        width:calc((180px / 3) - 5px );
+        width:calc((100% / 3) - 5px );
         height:40px;
     }
 
     .ib-m{
-        width:calc((180px / 2) - 5px );
+        width:calc((100% / 2) - 5px );
         height:40px;
     }
     .ib-lt{
@@ -635,6 +851,14 @@
         padding:0;
     }
 
+    .info-block > img{
+        position: absolute;
+        top:50%;
+        left:50%;
+        transform: translate(-50%,-50%);
+    }
+
+
     .info-block-value{
         position: relative;
         margin: 10px auto 0;
@@ -645,7 +869,13 @@
     }
 
     .info-block-value span{
-        margin: 0 5px;    
+        display: inline-block;
+        margin: 0 5px; 
+        font-size: 16px;
+        font-weight: 600;
+        text-align: center;
+        font-family: var(--text-font);
+        text-transform: capitalize;
     }
 
     .info-block-name{
@@ -673,5 +903,83 @@
         font-weight: 600;
         opacity: 50%;
     }
+
+
+
+
+/* Mobile- */
+@media only screen and (max-width: 600px) {
+ .modal-wrapper-mobile{
+    display:inherit;
+ }
+ .modal-wrapper-desk{
+    display:none;
+ }
+
+}
+/* Mobile+ */
+@media only screen and (min-width: 600px) {
+    .modal-wrapper-desk{
+        height:800px;
+        width:600px;
+    }
+    .modal-loading{
+        height:800px;
+        width:600px;
+    }
+
+        
+    .modal-wrapper{
+        display:inherit;
+    }
+    .modal-wrapper-mobile{
+        display:none;
+    }
+
+}
+
+
+/* Tablet */
+@media only screen and (min-width: 768px) {
+    .modal-wrapper-desk{
+        height:800px;
+        width:600px;
+    }
+    .modal-loading{
+        height:800px;
+        width:600px;
+    }
+
+    .modal-name{
+        font-size: 50px;
+
+    }
+        
+    .modal-wrapper{
+        display:inherit;
+    }
+    .modal-wrapper-mobile{
+        display:none;
+    }
+
+}
+
+/* Desktop */
+@media only screen and (min-width: 1200px) {
+    .modal-wrapper-desk{
+        height:800px;
+        width:600px;
+    }
+    .modal-loading{
+        height:800px;
+        width:600px;
+    }
+    .modal-wrapper{
+        display:inherit;
+    }
+    .modal-wrapper-mobile{
+        display:none;
+    }
+}
 
 </style>

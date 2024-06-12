@@ -2,7 +2,9 @@
     <div class="nav">
 
         <nav class="nav-bar">
-            <input type="text" name="search-bar" id="search-bar" class="search-bar" placeholder="Pokemon Search...">
+            <button class="top-btn">Team</button>
+            <input type="text" name="search-bar" @input="getInput()" id="search-bar" class="search-bar" placeholder="Pokemon Search...">
+            <button class="top-btn filter-open-btn" @click="mobileFilterToggle()"><img src="./icons/filter.png" alt=""></button>
         </nav>
 
         <div class="nav-btns">
@@ -56,8 +58,17 @@
 
             </div>
 
-            <input type="checkbox" name="Babies" id="baby">
-            <input type="checkbox" name="Legendarys" id="legendary">
+
+            <button class="check-btn" @click="caughtFilterToggle()">
+                <div><p v-if="stateStorage.filterCaught">&#x1F5F8;</p><p v-if="!stateStorage.filterCaught">&#160;</p> </div>
+                <p>Caught</p>
+            </button>
+
+            <button class="check-btn" @click="favFilterToggle()">
+                <div><p v-if="stateStorage.filterFavorite">&#x1F5F8;</p><p v-if="!stateStorage.filterFavorite">&#160;</p> </div>
+                <p>Favorite</p>
+            </button>
+
         </div>
         
         <div class="filter-btn-box">
@@ -69,11 +80,44 @@
         </div>
 
         <div class="caught-count" >
-            <p >{{ stateStorage.caughtList.length }} / 1025</p>
+            <p>You've Caught: {{ stateStorage.caughtList.length }} / {{ stateStorage.masterList.length }}</p>
         </div>
 
     </div>
 
+    <div class="mobile-filter-wrapper" v-if="this.isMobileModalOpen">
+        
+
+        <div class="filter-container">
+            <button class="m-nav-close" @click="mobileFilterToggle()">&#11436;</button>
+
+            <h2>Filters:</h2>
+
+            <h4>Type:</h4>
+            <div class="m-select-btns" @mouseover="isOpenType=true" @mouseout="isOpenType=false">
+                <div v-for="types in this.typeList" class="type-btn base-btn" :class="{'active' : stateStorage.filterTypeList.includes(types)},  types.toLowerCase() " @click="filterType(types)">
+                    <p>{{ types }}</p>
+                </div>
+            </div>
+
+            <h4>Stat:</h4>
+            <div class="m-select-btns"  @mouseover="isOpenStat=true" @mouseout="isOpenStat=false">
+                <div v-for="stat in this.statList" class="type-btn base-btn" :class="{'active' : stateStorage.filterStatList.includes(stat)},  stat" @click="filterStat(stat)">
+                    <p>{{ this.computedStats(stat) }}</p>
+                </div>
+            </div>
+
+            <h4>First Appearance: </h4>
+            <div class="m-select-btns" @mouseover="isOpenGen=true" @mouseout="isOpenGen=false">
+                <div v-for="gen in this.genList" class="type-btn wide-btn base-btn" :class="{'active' : stateStorage.filterGenList.includes(gen)}, gen" @click="filterGen(gen)">
+                    <p >Generation {{ gen }}</p>
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="mf-bg" @click="mobileFilterToggle()"></div>
+    </div>
 </template>
 
 <script>
@@ -100,6 +144,10 @@ export default {
 
             isBabies: false,
             isLegendary: false,
+
+            isMobileModalOpen: false,
+
+
         };
     },
 
@@ -172,7 +220,30 @@ export default {
                 default:
                 break
             }
-        }
+        },
+        mobileFilterToggle(){
+            if(this.isMobileModalOpen){
+                this.isMobileModalOpen = false
+            }else {
+                this.isMobileModalOpen = true
+            }
+        },
+        caughtFilterToggle(){
+            if(stateStorage.filterCaught){
+                stateStorage.filterCaught = false
+            } else { 
+                stateStorage.filterCaught = true}
+        },
+        favFilterToggle(){
+            if(stateStorage.filterFavorite){
+                stateStorage.filterFavorite = false
+            } else { 
+                stateStorage.filterFavorite = true}
+        },
+        getInput(){
+            console.log(event.target.value)
+            stateStorage.searchQuery = event.target.value.toLowerCase()
+        },
 
     },
     computed: {
@@ -187,33 +258,105 @@ export default {
             }
         },
 
+
     },
     created() {
     },
+    
 }
 </script>
 
 <style>
 
+
+.mobile-filter-wrapper{
+    position: fixed;
+    top:0;
+    left:0;
+    height:100%;
+    width:100vw;
+    z-index: 9999999;
+}
+.m-nav-close{
+    position: absolute;
+    top:20px;
+    right:20px;
+    height: 40px;
+    width:40px;
+    border-radius: 20px;
+    border:none;
+    background: none;
+    font-size: 24px;
+    color: var(--text-light);
+}
+.m-nav-close:hover{
+}
+
+
+.filter-container{
+    position: absolute;
+    top:0;
+    right:0;
+    height:100%;
+    width:320px;
+    background-color: var(--modal-background);
+    padding:20px;
+    border-radius: 20px 0 0 20px;
+    box-shadow: -2px -2px 2px 2px rgba(0, 0, 0, 0.5),0 0 20px 20px rgba(0, 0, 0, 0.25);
+    z-index: 9999999;
+}
+
+
+
+.mf-bg{
+    position: absolute;
+    top:0;
+    left:0;
+    height:100%;
+    width:100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.m-select-btns{
+    width:100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap:10px 0px;
+    padding: 5px 5px;
+    z-index:10;
+    border-radius: 15px;
+    background-color: #444;
+    border:1px solid var(--stat-border)
+}
+
+.filter-container > h4{
+    margin-top:10px;
+}
+
 .nav{
     position: fixed;
-    width:var(--global-width);
     left:50%;
     transform: translate(-50%,0);
     top:0;
+    height:200px;
     padding: 30px;
-    z-index: 99;
+    z-index: 999;
     background-color: #222;
+    width:var(--global-width);
+    min-width:var(--global-min-width);
 }
 
 .nav-bar{
     margin:auto;
-    width:100%;
+    width:90%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     margin-bottom:15px;
+    gap:20px;
 }
 
 .search-bar{
@@ -222,11 +365,21 @@ export default {
     padding:10px 20px;
     font-family: "Roboto", sans-serif;
     font-weight: 400;
-    border-radius: 10px;
+    color:var(--text-light);
+    border-radius: 0 0 0 10px;
+    background-color: transparent;
+    border:none;
+    border-left:1px solid var(--text-dark);
+    border-bottom: 1px solid var(--text-dark);
+}
+.search-bar:focus{
+    outline:1px solid  var(--text-dark);
+}
+.search-bar::placeholder{
+    color:  var(--text-dark)
 }
 
 .nav-btns{
-
     width:70%;
     margin:auto;
     display: flex;
@@ -252,7 +405,7 @@ export default {
 }
 
 .select-btns{
-    width:calc((70px + 20px)* 3);
+    width:calc((70px + 22px)* 3);
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
@@ -298,22 +451,152 @@ export default {
 
 .filter-btn:hover{
     box-shadow: 0 0 2px 2px rgba(255, 255, 255, .25);
-    cursor: default;
+    cursor: pointer;
 }
 
 .filter-btn p{
     text-transform: capitalize;
+    pointer-events: none;
 }
 
 .filter-btn p:hover{
     cursor: default;
 }
 
+.check-btn{
+    height: 44px;
+    width:60px;
+    background-color: #444;
+    border-radius: 15px;
+    border:none;
+}
+.check-btn > div{
+    position: relative;
+    background-color:#777;
+    width:20px;
+    height:16px;
+    margin:auto;
+}
+.check-btn > div > p{
+    position: absolute;
+    top:45%;
+    left:60%;
+    transform: translate(-50%,-50%);
+    font-size: 42px;
+    margin:auto;
+}
+
+.check-btn > p{
+    color:var(--text-light);
+}
 
 .caught-count{
     position: absolute;
     right:100px;
-    bottom:50px;
+    bottom:10px;
+    font-family: var(--text-font);
+}
+
+.filter-open-btn{
+    border:none;
+    background: none;
+}
+.filter-open-btn img{
+    filter: invert(80%);
+}
+
+
+/* Mobile- */
+@media only screen and (max-width: 600px) {
+
+    .nav{
+        height:120px;
+        padding:30px 10px;
+    }
+
+    .nav-btns{
+        display: none;
+    }
+ 
+    .filter-btn-box{
+        display: flex;
+        width:100%;
+        gap:10px;
+        margin-top:10px;
+    }
+    .filter-btn{
+        padding:5px 10px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        border-radius: 10px;
+        background-color: #333;
+        gap:5px;
+    }
+}
+
+/* Mobile+ */
+@media only screen and (min-width: 600px) {
+    
+    .nav{
+        height:120px;
+        padding: 30px 10px;
+    }
+    .nav-btns{
+        display: none;
+    }
+}
+
+
+/* Tablet */
+@media only screen and (min-width: 768px) {
+    .top-btn{
+        display:none
+    }
+    .nav{
+        height:180px;
+    }
+    .nav-btns{
+        width:90%;
+        display: flex;
+    }
+    .dropdownBox{
+        position: relative;
+        background-color: #444;
+        width:140px;
+        border-radius: 15px;
+        text-wrap: none;
+    }
+}
+
+@media only screen and (min-width: 1000px) {
+    .nav{
+        height:180px;
+    }
+    .nav-btns{
+        width:80%;
+        display: flex;
+    }
+}
+
+/* Desktop */
+@media only screen and (min-width: 1200px) {
+    .top-btn{
+        display:none
+    }
+
+    .search-bar{
+        width:70%;
+        margin:auto;
+    }
+
+    .nav{
+        height:200px;
+    }
+    .nav-btns{
+        width:60%;
+        display: flex;
+    }
 }
 
 

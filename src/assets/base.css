@@ -31,15 +31,16 @@
 
 /* semantic color variables for this project */
 :root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
 
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
+  --body-background: #111;
+  --card-background: #333;
+  --modal-background: #444;
+  --stat-background:#666;
+  --stat-border: #777;
 
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
+
+  --text-light:rgba(235,235,235,0.64);
+  --text-dark:rgb(83, 83, 83);
 
   --section-gap: 160px;
 
@@ -48,6 +49,7 @@
   --text-font:"Montserrat", sans-serif;
 
 
+  color:var(--text-light)
 
 
 }
@@ -55,15 +57,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
 
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
   }
 }
 
@@ -106,6 +100,10 @@ body {
   cursor: pointer;
 }
 
+.attack{ background-color:#10008DFF }
+.defense{ }
+
+
 .I{
   background-image: linear-gradient(135deg, #FF0000FF 39%, #FFFC00FF 50%, #073AFFFF 62%);
 }
@@ -133,7 +131,6 @@ body {
 .IX{
   background-image: linear-gradient(135deg, #FF00F1FF 25%, #AF0202FF 75%);
 }
-
 
 .normal{
   background-color: #b3b3a4;
@@ -213,7 +210,7 @@ body {
   cursor: default;
 }
 .wide-btn{
-  width:120px;
+  width:125px;
 }
 
 .type-btn p{
@@ -232,4 +229,48 @@ body {
 
 .fa-center { 
   line-height: inherit!important; vertical-align: middle; 
+}
+
+
+
+.pokeball-btn {
+  background: none;
+  border:none;
+  height:32px;
+  width:32px;
+}
+
+.not-caught{
+  filter: grayscale(100%);
+}
+
+.caught{
+  filter: grayscale(0%);
+}
+
+.pokeball-btn:hover img{
+  cursor: pointer;
+}
+
+.star-btn{
+  font-size: 32px;
+  text-align: center;
+  line-height: 32px;
+  color:black;
+  background: none;
+  border:none;
+  height:32px;
+  width:32px;
+}
+.star-btn:hover{
+  color:gold;
+}
+
+.star-btn:hover{
+  cursor: pointer;
+}
+
+.favourite{
+  filter: brightness(200%);
+  color:gold;
 }

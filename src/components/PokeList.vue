@@ -1,12 +1,8 @@
 <template>
-  <div class="buttons">
-    <button @click="clearLists()">Clear storage</button>
-    <button @click="logLists()">log Storage</button>
-  </div>
 
 
   <Transition>
-    <div class="loading-screen" v-if="isLoading">
+    <div class="loading-screen" v-if="isLoading"  >
       <div class="loading-img-wrapper">
         <img src="../assets/pokeball_PNG8.png" alt="">
       </div>
@@ -15,11 +11,12 @@
   </Transition>
 
 
-  <div class="list" >
+  <div class="list">
+
     <div v-for="pokemon in this.PokeListSorted" :key="pokemon.name" :id="pokemon.name" class="pokemon-card" @click="listClick(pokemon)" :alt="pokemon.name">
       <p class="pokemon-id"># {{ pokemon.id }}</p>
 
-      <button class="pokeball-btn corner-btn" @click.stop.prevent="pushToCaught(pokemon)" ><img :class="{'not-caught' : !stateStorage.caughtList.includes(pokemon.name)}"  src="../assets/pokeball_active.png" alt=""></button>
+      <button class="pokeball-btn corner-btn" @click.stop.prevent="pushToCaught(pokemon)" ><img :class="{'not-caught' : !stateStorage.caughtList.includes(pokemon.name)}"  src="./icons/pokeball_active.png" alt=""></button>
       <button class="star-btn corner-btn" @click.stop.prevent="pushToFavorites(pokemon)" :class="{'favourite' : stateStorage.favouriteList.includes(pokemon.name)}">&#9733</button>
 
       <img :src='pokemon.sprites.versions["generation-v"]["black-white"].animated.front_default || pokemon.sprites.front_default' onerror="this.src=''" class="pokemon-img-gif">
@@ -36,11 +33,11 @@
     </div>
   </div>
   
-  <div class="modal-wrapper" v-if="isOpenModal">
+  <div class="modal-wrapper" v-if="stateStorage.modalOpen">
 
     <ModalPop/>
     
-    <div class="modal-bg" @click="isOpenModal = false"></div>
+    <div class="modal-bg" @click="stateStorage.modalOpen = false"></div>
 
   </div>
 
@@ -49,7 +46,7 @@
 
 <script>
   import ModalPop from './ModalPop.vue';
-  import { stateStorage } from './dataStorage'
+  import { stateStorage , saveLists , loadLists , logLists } from './dataStorage'
 
 
   export default {
@@ -57,13 +54,12 @@
           return{
             stateStorage,
 
-            fetchStart: 30,
+            fetchStart: 50,
             fetchScroll: 20,
             fetchMax: 1025,
             url: 'https://pokeapi.co/api/v2/pokemon?limit=' + this.fetchStart + '&offset=0',
             csvContent: "data:text/csv;charset=utf-8,",
             isLoading: true,
-            isOpenModal: false,
 
             currentPokemon: {},
 
@@ -77,26 +73,42 @@
             isBabies: false,
             isLegendary: false,
 
+            yScroll: 20,
+
           }
       },
 
       methods: {
         //pokemon List fetch. Gets / sorts pokemon based on ID      
         async fetchPokemon(){
-          const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=' + this.fetchStart + '&offset=0')
-          const data = await res.json()
+          if(stateStorage.masterList.length == 0){
+            const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=' + this.fetchStart + '&offset=0')
+              const data = await res.json()
                 data.results.forEach(element => {
-                      fetch('https://pokeapi.co/api/v2/pokemon/' + element.name)
-                        .then(response => response.json())
-                        .then(data => {
-                          stateStorage.masterList.push(data)
-                        })
-                      })
+                  fetch('https://pokeapi.co/api/v2/pokemon/' + element.name)
+                    .then(response => response.json())
+                    .then(data => {
+                      stateStorage.masterList.push(data)
+                    })
+                  })
+          }
         },
       
+        async addFetchPokemon(){
+          //on scroll add 2 lines of pokemon to the master List
+          let winHeight = document.getElementById('content').offsetHeight
+          let cardHeight = 200 //px
+          
+          let winWidth = document.getElementById('content').offsetWidth
+          let cardWidth = 150
+
+          let cardsPerRow = winWidth / cardWidth
+
+        },
+
         listClick(poke){
           stateStorage.currentPokemon = poke
-          this.isOpenModal = true
+          stateStorage.modalOpen = true
           console.log(poke);
         },
 
@@ -108,7 +120,7 @@
             }else{
                 stateStorage.favouriteList.splice(stateStorage.favouriteList.indexOf(pokeName), 1)
             }
-            this.saveLists()
+            saveLists()
 
         },
 
@@ -120,34 +132,13 @@
             }else{
                 stateStorage.caughtList.splice(stateStorage.caughtList.indexOf(pokeName), 1)
             }
-            this.saveLists()
+            saveLists()
         },
 
         toggleLoading(){
           this.isLoading = false
         },
 
-        saveLists(){
-          console.log('saving')
-          localStorage.setItem('favoriteList', JSON.stringify(stateStorage.favouriteList))
-          localStorage.setItem('caughtList', JSON.stringify(stateStorage.caughtList))
-        },
-
-        loadLists(){
-          console.log(localStorage.getItem('favoriteList'))
-          if (localStorage.getItem('favoriteList')) {stateStorage.favouriteList = JSON.parse(localStorage.getItem('favoriteList'))}
-          if (localStorage.getItem('caughtList')) {stateStorage.caughtList = JSON.parse(localStorage.getItem('caughtList'))}
-        },
-
-        logLists(){
-          console.log(localStorage.getItem('favoriteList'));
-          console.log(localStorage.getItem('caughtList'))
-        },
-
-        clearLists(){
-          localStorage.removeItem('favoriteList');
-          localStorage.removeItem('caughtList');
-        }
       },
 
       computed: {
@@ -190,6 +181,19 @@
               })
           }
           this.displayList.sort((a, b) => { return a.id - b.id;})
+          //shallow copy filter for Caught and favourite
+          if(stateStorage.filterCaught){
+            this.displayList = this.displayList.filter((poke) => stateStorage.caughtList.includes(poke.name))
+          }
+
+          if(stateStorage.filterFavorite){
+            this.displayList = this.displayList.filter((poke) => stateStorage.favouriteList.includes(poke.name))
+          }
+
+          if(stateStorage.searchQuery){
+            this.displayList = this.displayList.filter(element => element.name.includes(stateStorage.searchQuery))
+          }
+
 
           return this.displayList
         },
@@ -197,7 +201,8 @@
       },
 
       created(){
-        this.loadLists()
+        logLists()
+        loadLists()
         this.fetchPokemon()
         console.log(this.pokeMasterList)
       },
@@ -214,38 +219,33 @@
 
 
 <style scoped>
-  .buttons{
-    position: absolute;
-    top:0;
-    left:-250px;
 
-  }
-
-.list{
+  .list{
     display: flex;
     flex-wrap: wrap;
     gap: 40px 15px;
     justify-content: center;
   }
-  /* Loading */
+
   .v-enter-active,
   .v-leave-active {
-    transition: transform 0.5s ease;
+    transition: all 0.5s ease;
+    opacity: 100%;
   }
-
   .v-enter-from,
   .v-leave-to {
-    transform: translate(0, 1080px);
+    transform: translate(0, 100vh);
+    opacity: 0%;
   }
+
+
+
 
   .loading-screen{
     position:absolute;
     display: flex;
     flex-direction: row;
     justify-content: center;
-    top:200px;
-    height:100%;
-    min-height:80vh;
     width:100%;
     z-index: 99;
     background-color: #444;
@@ -306,8 +306,6 @@
     flex-direction: column;
     align-items: center;
     border-radius: 20px;
-    height: 120px;
-    width: 210px;
     background-color: #333;
   }
 
@@ -331,7 +329,7 @@
     height:auto;
     max-width:120px;
     max-height:100px;
-    z-index: 999;
+    z-index: 99;
   }
   
   .pokemon-id{
@@ -347,6 +345,7 @@
   
   .pokemon-name{
     font-family: var(--text-font);
+    font-size: 32px;
     text-transform: capitalize;
     font-weight: 700;
     font-size: 18px;
@@ -356,6 +355,7 @@
 
    /* Fav / Caught Buttons */
   .corner-btn{
+    position: absolute;
     background: none;
     border:none;
     height:32px;
@@ -371,49 +371,20 @@
     transform: translate(-50%,-50%);
   }
 
-  .pokeball-btn {
-    position: absolute;
-    bottom:5px;
-    right:5px;
-  }
-
-  .not-caught{
-    filter: grayscale(100%);
-  }
   
-  .caught{
-    filter: grayscale(0%);
-  }
+.pokeball-btn {
+  bottom:5px;
+  right:5px;
+}
 
-  .pokeball-btn:hover img{
-    cursor: pointer;
-  }
+.star-btn{
+  top:0px;
+  right:5px;
+}
+  
 
-  
-  .star-btn{
-    position: absolute;
-    top:0px;
-    right:5px;
-    font-size: 28px;
-    color:black;
-  }
-  .star-btn:hover{
-    color:gold;
-  }
 
-  .star-btn:hover img{
-    cursor: pointer;
-  }
-  
-  .favourite{
-    filter: brightness(200%);
-    color:gold;
-  }
- 
-  .corner-btn i{
-    color: white;
-  }
-  
+
   .pokemon-card:hover{
     box-shadow: 0 0 2px 2px rgba(255, 255, 255, .25);
   }
@@ -425,6 +396,64 @@
   .pokemon-card:hover > .pokemon-img{
     display:none;
   }
+
+
+
+
+/* Mobile */
+@media only screen and (max-width: 600px) {
+  /* Loading */
+  .loading-screen{
+    top:130px;
+    height:100%;
+    min-height:80vh;
+  }
+  .pokemon-card{
+    height: 140px;
+    width: 175px;
+  }
+}
+/* Mobile */
+@media only screen and (min-width: 600px) {
+  /* Loading */
+  .loading-screen{
+    top:130px;
+    height:100%;
+    min-height:80vh;
+  }
+  .pokemon-card{
+    height: 120px;
+    width: 210px;
+  }
+}
+/* Tablet */
+@media only screen and (min-width: 768px) {
+  /* Loading */
+  .loading-screen{
+    top:190px;
+    height:100%;
+    min-height:80vh;
+  }
+  .pokemon-card{
+    height: 120px;
+    width: 210px;
+  }
+}
+/* Desktop 1440p*/
+@media only screen and (min-width: 1200px) {
+  /* Loading */
+  .loading-screen{
+    top:200px;
+    height:100%;
+    min-height:80vh;
+  }
+  .pokemon-card{
+    height: 120px;
+    width: 210px;
+  }
+
+}
+
 
 </style>
   
