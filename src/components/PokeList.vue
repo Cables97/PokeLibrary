@@ -4,9 +4,8 @@
   <Transition>
     <div class="loading-screen" v-if="isLoading"  >
       <div class="loading-img-wrapper">
-        <img src="../assets/pokeball_PNG8.png" alt="">
+        <img src="./icons/pokeball_PNG8.png" alt="">
       </div>
-      
     </div>
   </Transition>
 
@@ -210,13 +209,12 @@
         loadLists()
         this.fetchPokemon()
         console.log(stateStorage.masterList)
-
       },
 
       mounted() {
         setTimeout(() => {
           this.isLoading = false
-        }, 500);
+        }, 3000);
       },
 
       components: { ModalPop, AlertBox }

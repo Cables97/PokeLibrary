@@ -1,6 +1,6 @@
 <template>
 
-    <Transition>
+    <Transition name="modal-load">
         <div class="modal-loading" v-if="this.isLoadingModal">
             <img src="./icons/Pokemon-Pokeball-PNG-HD-Image.png" alt="">
         </div>
@@ -328,6 +328,7 @@
         },
 
         switchPokemon(pokeName){
+            this.isLoadingModal = true;
             if(!this.missingEvo){
                 const pokeObj = stateStorage.masterList.find(item => item.name === pokeName);
                 this.currentPokemon = pokeObj
@@ -428,18 +429,19 @@
             this.isLoadingModal = false;
         }, 750);
     },
-    beforeUpdate(){
-        //this.isLoadingModal = true;
-    },
+    
     updated(){
+        console.log('updated')
         setTimeout(() => {
             this.isLoadingModal = false;
-        }, 750);
+        }, 500);
+        
+
     }
 }
 </script>
 
-<style >
+<style scoped>
     .modal-wrapper-mobile{
         position: absolute;
         top:50%;
@@ -533,10 +535,6 @@
        gap:6px;
        padding:0 6px 10px ;
     }
-
-
-
-
     .modal-close-btns{
        position: absolute;
        right:0;
@@ -592,13 +590,13 @@
         animation: anim-spin 1s infinite;
     }
 
-    .v-enter-active,
-    .v-leave-active {
+    .modal-load-enter-active,
+    .modal-load-leave-active {
         transition: transform 0.5s ease;
     }
 
-    .v-enter-from,
-    .v-leave-to {
+    .modal-load-enter-from,
+    .modal-load-leave-to {
         transform: translate(-50%, 1000px);
     }
 
