@@ -10,16 +10,16 @@
     <div class="modal-wrapper-desk" v-if="!this.isLoadingModal">
 
         <div class="modal-close-btns" :class="{ 'm-c-b-raise' : !this.isLoadingModal }">
-            <button class="pokeball-btn corner-btn" @click.stop.prevent="pushToCaught(pokemon)" ><img :class="{'not-caught' : !stateStorage.caughtList.includes(this.currentPokemon.name)}"  src="./icons/pokeball_active.png" alt=""></button>
-            <button class="star-btn corner-btn" @click.stop.prevent="pushToFavorites(pokemon)" :class="{'favourite' : stateStorage.favouriteList.includes(this.currentPokemon.name)}">&#9733</button>
-            <button class="star-btn corner-btn" @click="stateStorage.modalOpen = false">&#x2715;</button>
+            <button class="pokeball-btn" @click.stop.prevent="pushToCaught(pokemon)" ><img :class="{'not-caught' : !stateStorage.caughtList.includes(this.currentPokemon.name)}"  src="./icons/pokeball_active.png" alt=""></button>
+            <button class="star-btn" @click.stop.prevent="pushToFavorites(pokemon)" :class="{'favourite' : stateStorage.favouriteList.includes(this.currentPokemon.name)}">&#9733</button>
+            <button class="close-btn" @click="stateStorage.modalOpen = false">&#x2715;</button>
         </div>
 
         <div class="modal-content">
             
             <div class="modal-text">
                 <div class="modal-topline">
-                    <h3 class="modal-id">ID: {{ this.currentPokemon["id"] }}    <span v-if="stateStorage.favouriteList.includes(currentPokemon.name)">&#9733</span></h3>
+                    <h3 class="modal-id">ID: {{ this.currentPokemon["id"] }}    <span class="star-btn" v-if="stateStorage.favouriteList.includes(currentPokemon.name)">&#9733</span></h3>
                     <img v-if="stateStorage.caughtList.includes(currentPokemon.name)"  src="./icons/pokeball_active.png" alt="This pokemon has been caught" />
                 </div>
                 
@@ -51,9 +51,8 @@
                 </div>
 
                 <div class="modal-img-wrap">
-                     <img :src='this.currentPokemon.sprites.versions["generation-v"]["black-white"].animated.front_default || pokemon.sprites.front_default' onerror="this.src=''" class="modal-img" :alt="this.currentPokemon.name">
+                     <img :src='this.currentPokemon.sprites.versions["generation-v"]["black-white"].animated.front_default || pokemon.sprites.front_default' @click="playCry()" onerror="this.src=''" class="modal-img" :alt="this.currentPokemon.name">
                      <div class="modal-img-shadow"></div>
-                     <div class="modal-img-cry" @click="playCry()"><img src="./icons/icons8-audio-wave-50.png" alt=""></div>
                 </div>
 
                 <div class="modal-types">
@@ -150,9 +149,8 @@
     <div class="modal-wrapper-mobile" v-if="!isLoadingModal">
 
         <div class="modal-close-btns" :class="{ 'm-c-b-raise' : !this.isLoadingModal }">
-            <button class="pokeball-btn corner-btn" @click.stop.prevent="pushToCaught(pokemon)" ><img :class="{'not-caught' : !stateStorage.caughtList.includes(this.currentPokemon.name)}"  src="./icons/pokeball_active.png" alt=""></button>
-            <button class="star-btn corner-btn" @click.stop.prevent="pushToFavorites(pokemon)" :class="{'favourite' : stateStorage.favouriteList.includes(this.currentPokemon.name)}">&#9733</button>
-            <!--<button class="star-btn corner-btn" @click="stateStorage.modalOpen = false">&#x2715;</button>-->
+            <button class="pokeball-btn" @click.stop.prevent="pushToCaught(pokemon)" ><img :class="{'not-caught' : !stateStorage.caughtList.includes(this.currentPokemon.name)}"  src="./icons/pokeball_active.png" alt=""></button>
+            <button class="star-btn" @click.stop.prevent="pushToFavorites(pokemon)" :class="{'favourite' : stateStorage.favouriteList.includes(this.currentPokemon.name)}">&#9733</button>
         </div>
 
         <div class="m-modal-content">
@@ -479,6 +477,9 @@
         background-image: linear-gradient(1deg, #CCB47FFF 0%, #CCB47FFF 20%, #ffefd5ff 25%, #ffefd5ff 90%, #B1EBFFFF 100%);
         -webkit-appearance: none;
     }
+    .m-modal-img:hover{
+        cursor: pointer;
+    }
 
     .m-modal-img  .modal-img {
         height:80%;
@@ -697,9 +698,9 @@
         bottom:-75%;
         left:20px;
         padding:10px;
-        background-color: var(--flavor-background);
+        background-color: var(--flavor-popout);
         border-radius: 10px;
-        box-shadow: 5px 3px 5px 5px rgba(0, 0, 0, .50);
+        box-shadow: 5px 3px 10px 0 rgba(0, 0, 0, .50);
         z-index: 10;
     }
 
@@ -742,7 +743,9 @@
         width: 90%;
         height:auto;
         aspect-ratio: 1;
-        border: 5px groove var(--flavor-background);
+        border-style:outset;
+        border-width: 5px;
+        border-color:var(--modal-border1) var(--modal-border2) var(--modal-border2)  var(--modal-border1);
         margin: auto;
         border-radius: 20px;
         background-image: linear-gradient(1deg, #CCB47FFF 0%, #CCB47FFF 20%, #ffefd5ff 25%, #ffefd5ff 90%, #B1EBFFFF 100%);
@@ -781,6 +784,10 @@
         transform: translate(-50%,-50%);
         height:60%;
         z-index: 2;
+    }
+
+    .modal-img:hover{
+        cursor: pointer;
     }
 
     .modal-img-shadow{

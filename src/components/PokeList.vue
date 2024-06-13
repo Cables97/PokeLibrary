@@ -33,7 +33,7 @@
     </div>
   </div>
   
-  <div class="modal-wrapper" v-if="stateStorage.modalOpen">
+  <div class="modal-wrapper"  v-if="stateStorage.modalOpen">
 
     <ModalPop/>
     
@@ -41,12 +41,18 @@
 
   </div>
 
+  <div class="alert-box-wrapper" :class="{ 'alert-active' : stateStorage.alertActive }">
+    <AlertBox> </AlertBox>
+  </div>
+  
+
 </template>
   
 
 <script>
+  import AlertBox from './AlertBox.vue';
   import ModalPop from './ModalPop.vue';
-  import { stateStorage , saveLists , loadLists , logLists } from './dataStorage'
+  import { stateStorage , saveLists , loadLists , logLists , alert } from './dataStorage'
 
 
   export default {
@@ -54,7 +60,7 @@
           return{
             stateStorage,
 
-            fetchStart: 50,
+            fetchStart: 493,
             fetchScroll: 20,
             fetchMax: 1025,
             url: 'https://pokeapi.co/api/v2/pokemon?limit=' + this.fetchStart + '&offset=0',
@@ -117,9 +123,10 @@
             if(!stateStorage.favouriteList.includes(pokeName)){
               stateStorage.favouriteList.push(pokeName)
               console.log(pokeName + " Favourited!")
+              alert(pokeName + " favourited!")
             }else{
                 stateStorage.favouriteList.splice(stateStorage.favouriteList.indexOf(pokeName), 1)
-                console.log(pokeName + " no longer appreciated!")
+                alert(pokeName + " removed from favourites!")
             }
             saveLists()
 
@@ -129,10 +136,10 @@
           let pokeName = poke["name"]
             if(!stateStorage.caughtList.includes(pokeName)){
               stateStorage.caughtList.push(pokeName)
-              console.log(pokeName + "  Caught!")
+              alert(pokeName + "  caught!")
             }else{
                 stateStorage.caughtList.splice(stateStorage.caughtList.indexOf(pokeName), 1)
-                console.log(pokeName + "  Released into the wild!")
+                alert(pokeName + "  released into the wild!")
             }
             saveLists()
         },
@@ -212,7 +219,7 @@
         }, 500);
       },
 
-      components: { ModalPop }
+      components: { ModalPop, AlertBox }
   }
 </script>
 
@@ -236,9 +243,6 @@
     transform: translate(0, 100vh);
     opacity: 0%;
   }
-
-
-
 
   .loading-screen{
     position:absolute;
@@ -304,8 +308,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    border:2px solid var(--card-border);
     border-radius: 20px;
     background-color: var(--card-background);
+    box-shadow: 4px 4px 10px 0 var(--card-shadow), 0 0 10px rgba(0, 0, 0, .1) inset;
   }
 
   .types{
@@ -340,6 +346,8 @@
     border-radius: 20px 0 10px 0 ;
     border-top-style: none;
     border-left-style: none;
+    background-color: rgba(0, 0, 0, .1);
+    box-shadow:0 0 10px 0 rgba(0, 0, 0, .25);
   }
   
   .pokemon-name{
@@ -349,7 +357,7 @@
     font-weight: 700;
     font-size: 18px;
     letter-spacing: 1px;
-    margin: 36px 0 6px;
+    margin: 36px 0 0px;
   }
 
    /* Fav / Caught Buttons */
@@ -370,22 +378,19 @@
     transform: translate(-50%,-50%);
   }
 
-  
-.pokeball-btn {
-  bottom:5px;
-  right:5px;
-}
+  .pokeball-btn {
+    bottom:5px;
+    right:5px;
+  }
 
-.star-btn{
-  top:0px;
-  right:5px;
-}
-  
-
-
-
+  .star-btn{
+    top:0px;
+    right:5px;
+  }
+    
   .pokemon-card:hover{
-    box-shadow: 0 0 2px 2px rgba(255, 255, 255, .25);
+    transform: scale(105%);
+    box-shadow: 6px 6px 10px 0 var(--card-shadow);
   }
   
   .pokemon-card:hover > .pokemon-img-gif{
@@ -396,6 +401,19 @@
     display:none;
   }
 
+
+  .alert-box-wrapper{
+    position: fixed;
+    bottom:-100px;
+    right:10px;
+    transition: all 1s;
+  }
+
+
+  .alert-active{
+    bottom:10px;
+    right:10px;
+  }
 
 
 

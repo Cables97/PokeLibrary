@@ -1,6 +1,6 @@
 <template>
     <div class="nav">
-
+        
         <nav class="nav-bar">
             <button class="top-btn">Team</button>
             <input type="text" name="search-bar" @input="getInput()" id="search-bar" class="search-bar" placeholder="Pokemon Search...">
@@ -12,7 +12,7 @@
             <div name="typeSelect" id="typeSelect" class="dropdownBox" @click="isOpenType=true" @mouseout="isOpenType=false">
 
                 <div class="select-top-line" @mouseover="isOpenType=true">
-                    <p>Type</p>
+                    <p>{{ this.activeTypeFilter }}</p>
                     <p>▼</p>
                 </div>
 
@@ -29,7 +29,7 @@
             <div name="statSelect" id="statSelect" class="dropdownBox" @click="isOpenStat=true" @mouseout="isOpenStat=false">
 
                 <div class="select-top-line" @mouseover="isOpenStat=true">
-                    <p>Main Stat</p>
+                    <p>{{ this.activeStatFilter }}</p>
                     <p>▼</p>
                 </div>
 
@@ -42,7 +42,7 @@
                 </div>
 
             </div>
-
+                <!--
             <div name="genSelect" id="genSelect" class="dropdownBox" @click="isOpenGen=true" @mouseout="isOpenGen=false">
 
                 <div class="select-top-line" @mouseover="isOpenGen=true">
@@ -57,7 +57,7 @@
                 </div>
 
             </div>
-
+                -->
 
             <button class="check-btn" @click="caughtFilterToggle()">
                 <div><p v-if="stateStorage.filterCaught">&#x1F5F8;</p><p v-if="!stateStorage.filterCaught">&#160;</p> </div>
@@ -70,7 +70,7 @@
             </button>
 
         </div>
-        
+        <!--
         <div class="filter-btn-box">
             <div v-for="types in stateStorage.filterTypeList" class="filter-btn" @click="filterType(types)"><p>{{ types }}</p><p>✖</p></div>
             <div v-for="stat in stateStorage.filterStatList" class="filter-btn"  @click="filterStat(stat)"><p>{{ stat }}</p><p>✖</p></div>
@@ -78,7 +78,7 @@
 
             <div class="reset filter-btn" v-if="isResetAll" @click="resetAll"><p>Reset Filters</p><p>✖</p></div>
         </div>
-
+        -->
         <div class="caught-count" >
             <p>You've Caught: {{ stateStorage.caughtList.length }} / {{ stateStorage.masterList.length }}</p>
         </div>
@@ -136,7 +136,7 @@ export default {
             isOpenStat: false,
 
             genList: ["I","II","III","IV","V","VI","VII","VIII","IX",],
-            isOpenGen: false,
+            isOpenGen: true,
             
             eggList: [],
             filterEggGroups: [],
@@ -257,6 +257,38 @@ export default {
                 return  true
             }
         },
+        activeTypeFilter(){
+            let filter = stateStorage.filterTypeList.length
+            let output = ''
+
+            if(filter == 0){
+                output = "Type Filter"
+            } else{
+                if(filter == 1){
+                    output = stateStorage.filterTypeList[0]
+                }
+                else{
+                    output = stateStorage.filterTypeList[0] + ", " + stateStorage.filterTypeList[1] +", ..."
+                }
+            }
+            return output
+        },
+        activeStatFilter(){
+            let filter = stateStorage.filterStatList.length
+            let output = ''
+
+            if(filter == 0){
+                output = "Stat Filter"
+            } else{
+                if(filter == 1){
+                    output = stateStorage.filterStatList[0]
+                }
+                else{
+                    output = stateStorage.filterStatList[0]  +"..."
+                }
+            }
+            return output
+        }
 
 
     },
@@ -267,7 +299,6 @@ export default {
 </script>
 
 <style>
-
 
 .mobile-filter-wrapper{
     position: fixed;
@@ -292,7 +323,6 @@ export default {
 .m-nav-close:hover{
 }
 
-
 .filter-container{
     position: absolute;
     top:0;
@@ -305,8 +335,6 @@ export default {
     box-shadow: -2px -2px 2px 2px rgba(0, 0, 0, 0.5),0 0 20px 20px rgba(0, 0, 0, 0.25);
     z-index: 9999999;
 }
-
-
 
 .mf-bg{
     position: absolute;
@@ -343,10 +371,9 @@ export default {
     height:200px;
     padding: 30px;
     z-index: 999;
-    background-color: rgba(0, 0, 0, 0.2);
     width:var(--global-width);
     min-width:var(--global-min-width);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(40px);
 }
 
 .nav-bar{
@@ -370,20 +397,19 @@ export default {
     border-radius: 0 0 0 10px;
     background-color: transparent;
     border:none;
-    border-left:1px solid var(--text-dark);
-    border-bottom: 1px solid var(--text-dark);
+    border-left:1px solid var(--text-main);
+    border-bottom: 1px solid var(--text-main);
 }
 
-
 .search-bar:focus{
-    outline:1px solid  var(--text-dark);
+    outline:1px solid  var(--text-main);
 }
 .search-bar::placeholder{
     color:  var(--text-light)
 }
 
 .nav-btns{
-    width:70%;
+    width:60%;
     margin:auto;
     display: flex;
     flex-direction: row;
@@ -393,9 +419,12 @@ export default {
 .dropdownBox{
     position: relative;
     background-color: var(--modal-background);
-    width:200px;
+    width:400px;
     border-radius: 15px;
     text-wrap: none;
+    border: 2px solid var(--stat-border);
+    font-family: var(--text-font);
+    text-transform: capitalize;
 }
 
 .select-top-line{
@@ -405,10 +434,11 @@ export default {
     justify-content: space-between;
     border-radius: 20px;
     padding:10px;
+    text-wrap: none;
 }
 
 .select-btns{
-    width:calc((70px + 22px)* 3);
+    width:calc((70px + 30px)* 3);
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
@@ -472,10 +502,12 @@ export default {
     background-color: var(--modal-background);
     border-radius: 15px;
     border:none;
+    border: 2px solid var(--stat-border);
 }
 .check-btn > div{
     position: relative;
     background-color:var(--stat-border);
+    border-radius: 5px;
     width:20px;
     height:16px;
     margin:auto;
@@ -490,7 +522,9 @@ export default {
 }
 
 .check-btn > p{
-    color:var(--text-light);
+    color:var(--text-main);
+    font-size: 12px;
+    font-family: var(--text-font);
 }
 
 .caught-count{
@@ -504,6 +538,7 @@ export default {
     border:none;
     background: none;
 }
+
 .filter-open-btn img{
     filter: invert(80%);
 }
@@ -560,14 +595,13 @@ export default {
         height:180px;
     }
     .nav-btns{
-        width:90%;
+        width:70%;
         display: flex;
     }
     .dropdownBox{
         position: relative;
         background-color: var(--modal-background);
-        width:140px;
-        border-radius: 15px;
+        width:170px;
         text-wrap: none;
     }
 }
@@ -594,10 +628,10 @@ export default {
     }
 
     .nav{
-        height:200px;
+        height:175px;
     }
     .nav-btns{
-        width:60%;
+        width:50%;
         display: flex;
     }
 }

@@ -29,24 +29,24 @@ export default {
 
 
 body{
-    background-color: var(--body-background);
-    box-shadow: 0 0 100px 50px rgba(0, 0, 0, .50) inset;
+    background-color: var(--sidebar-background);
+    box-shadow: 0 0 100px 50px rgba(0, 0, 0, .25) inset;
 }
 
 header{
-  background-color: var(--body-background);
+  background-color: white;
   z-index: 99999;
 }
 
 .pokemon-list-container{
   position: relative;
+  min-height: 100vh;
   width:var(--global-width);
   min-width: var(--global-min-width);
+  background-color: var(--body-background);
   margin:auto;
   padding-top:260px;
 }
-
-
 
 /* Mobile */
 @media only screen and (max-width: 600px) {
@@ -117,7 +117,7 @@ header{
   .pokemon-list-container{
     width:var(--global-width);
     min-width: var(--global-min-width);
-    padding-top:260px;
+    padding-top:240px;
   }
 }
 

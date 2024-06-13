@@ -32,45 +32,76 @@
 /* semantic color variables for this project */
 :root {
 
-  --body-background: #dedede;
-  --card-background: #fff;
+  --sidebar-background:#888;
+
+  --body-background: #ccc;
+
+  --card-background: white;
+  --card-border: #ddd;
+  --card-shadow:rgba(0,0,0,0.4);
+
   --modal-background: #ddd;
-  --flavor-background: #ccc;
-  --stat-background:#bbb;
-  --stat-border: #aaa;
+  --modal-border1:rgb(255, 97, 97);
+  --modal-border2:rgb(201, 201, 201);
+
+  
+
+  --flavor-background: rgba(155,155,170, 0.25);
+  --flavor-popout:  rgb(205, 205, 205);
+
+  
+  --stat-background:rgb(230,230,235);
+  --stat-border: rgb(132,130,140);
 
 
   --type-text:rgb(255, 255, 255);
 
   
-  --text-light:rgb(53, 53, 53);
-  --text-dark:rgb(32, 32, 32);
+  --text-main:rgb(69, 69, 69);
+  --text-sub:rgb(100, 100, 100);
 
 
   --title-font:"Roboto", sans-serif;
   --text-font:"Montserrat", sans-serif;
 
 
-  color:var(--text-light)
+  color:var(--text-main);
 
 }
 
 
 @media (prefers-color-scheme: dark) {
   :root {
+  
+    --sidebar-background:black;
+
     --body-background: #111;
-    --card-background: #333;
-    --modal-background: #444;
+
+    --card-background: #222;
+    --card-border: #333;
+    --card-shadow:rgba(0,0,0,0.4);
+  
+    --modal-background: #333;
+    --modal-border1:rgb(255, 97, 97);
+    --modal-border2:rgb(201, 201, 201);
+  
+  
+    
+  
     --flavor-background: #555;
+    --flavor-popout: #555;
+  
+    
     --stat-background:#666;
     --stat-border: #777;
   
   
-    --text-light:rgba(235,235,235,0.64);
-    --text-dark:rgb(83, 83, 83);
+    --type-text:rgb(255, 255, 255);
   
+    
+    --text-main:rgb(235, 235, 235);
+    --text-sub:rgb(83, 83, 1083);
 
-    color:var(--text-light)
   }
 }
 
@@ -116,33 +147,6 @@ body {
 .attack{ background-color:#10008DFF }
 .defense{ }
 
-.I{
-  background-image: linear-gradient(135deg, #FF0000FF 39%, #FFFC00FF 50%, #073AFFFF 62%);
-}
-.II{
-  background-image: linear-gradient(135deg, #FFC200FF 39%, #00FFF7FF 50%, #C0C0C0FF 62%);
-}
-.III{
-  background-image: linear-gradient(135deg, #FF0000FF 39%, #20FF00FF 50%, #10008DFF 62%);
-}
-.IV{
-  background-image: linear-gradient(135deg, #E7F8FFFF 39%, #7E7E7EFF 50%, #FFCAEEFF 62%);
-}
-.V{
-  background-image: linear-gradient(135deg, #4B4B4BFF 25%, #BEBEBEFF 75%);
-}
-.VI{
-  background-image: linear-gradient(135deg, #86B5FFFF 25%, #FA5757FF 75%);
-}
-.VII{
-  background-image: linear-gradient(135deg, #FF8200FF 0%, #FFC386FF 25%, #A843F7FF 75%, #6102AFFF 100%);
-}
-.VIII{
-  background-image: linear-gradient(135deg, #00CDFFFF 25%, #AF022CFF 75%);
-}
-.IX{
-  background-image: linear-gradient(135deg, #FF00F1FF 25%, #AF0202FF 75%);
-}
 
 .normal{
   background-color: #b3b3a4;
@@ -203,8 +207,10 @@ body {
 .type-btn{
   position: relative;
   border-radius: 20px;
-  min-width:70px;
+  min-width:75px;
   height:28px;
+  box-shadow: 0 0 4px 2px rgba(0, 0, 0, .50) inset;
+  background-image: linear-gradient(180deg, rgba(0,0,0,0%), rgba(0,0,0,25%));
 }
 
 .type-btn::after{
@@ -215,8 +221,7 @@ body {
   border-radius: 20px;
   width:100%;
   height:100%;
-  box-shadow: 0 0 4px 2px rgba(0, 0, 0, .50) inset;
-  background-image: linear-gradient(180deg, rgba(0,0,0,0%), rgba(0,0,0,25%));
+
 }
 .type-btn:hover{
   cursor: default;
@@ -242,8 +247,6 @@ body {
 .fa-center { 
   line-height: inherit!important; vertical-align: middle; 
 }
-
-
 
 .pokeball-btn {
   background: none;
@@ -274,6 +277,7 @@ body {
   height:32px;
   width:32px;
 }
+
 .star-btn:hover{
   color:gold;
 }
@@ -285,4 +289,51 @@ body {
 .favourite{
   filter: brightness(200%);
   color:gold;
+  -webkit-text-stroke: 2px rgba(0, 0, 0, .50);
+}
+.close-btn{
+  font-size: 32px;
+  text-align: center;
+  line-height: 32px;
+  color:rgba(50, 50, 50, 1);
+  background: none;
+  border:none;
+  height:32px;
+  width:32px;
+}
+
+.close-btn:hover{
+  color:black;
+}
+
+.close-btn:hover{
+  cursor: pointer;
+}
+
+.I{
+  background-image: linear-gradient(135deg, #FF0000FF 39%, #FFFC00FF 50%, #073AFFFF 62%);
+}
+.II{
+  background-image: linear-gradient(135deg, #FFC200FF 39%, #00FFF7FF 50%, #C0C0C0FF 62%);
+}
+.III{
+  background-image: linear-gradient(135deg, #FF0000FF 39%, #20FF00FF 50%, #10008DFF 62%);
+}
+.IV{
+  background-image: linear-gradient(135deg, #E7F8FFFF 39%, #7E7E7EFF 50%, #FFCAEEFF 62%);
+}
+.V{
+  background-image: linear-gradient(135deg, #4B4B4BFF 25%, #BEBEBEFF 75%);
+}
+.VI{
+  background-image: linear-gradient(135deg, #86B5FFFF 25%, #FA5757FF 75%);
+}
+.VII{
+  background-image: linear-gradient(135deg, #FF8200FF 0%, #FFC386FF 25%, #A843F7FF 75%, #6102AFFF 100%);
+}
+.VIII{
+  background-image: linear-gradient(135deg, #00CDFFFF 25%, #AF022CFF 75%);
+}
+.IX{
+  background-image: linear-gradient(135deg, #FF00F1FF 25%, #AF0202FF 75%);
 }

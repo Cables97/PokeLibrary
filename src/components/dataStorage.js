@@ -4,6 +4,8 @@ export const stateStorage = reactive({
     masterListLength: "0",
 
     modalOpen: false,
+    alertActive: false,
+    alertMessage: "",
 
     masterList: [],
     filterTypeList : [],
@@ -20,8 +22,6 @@ export const stateStorage = reactive({
     searchQuery: "",
     
 })
-
-
 
 export function saveLists(){
     console.log('saving')
@@ -49,3 +49,10 @@ export function clearLists(){
     localStorage.removeItem('caughtList');
 }
 
+export function alert(msg){
+    stateStorage.alertMessage = msg
+    stateStorage.alertActive = true
+    setTimeout(() => {
+        stateStorage.alertActive = false
+    }, 2000);
+}
