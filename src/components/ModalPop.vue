@@ -240,7 +240,7 @@
 </template>
 
 <script>
-  import { stateStorage , saveLists , loadLists } from './dataStorage'
+  import { stateStorage , saveLists , loadLists, popUp } from './dataStorage'
 
     export default {
     data() {
@@ -342,10 +342,10 @@
           let pokeName = this.currentPokemon["name"]
             if(!stateStorage.favouriteList.includes(pokeName)){
               stateStorage.favouriteList.push(pokeName)
-              alert(pokeName + " has been favorited!")
+              popUp(pokeName + " has been favorited!")
             }else{
                 stateStorage.favouriteList.splice(stateStorage.favouriteList.indexOf(pokeName), 1)
-                alert(pokeName + " removed from favorites!")
+                popUp(pokeName + " removed from favorites!")
             }
             saveLists()
 
@@ -355,9 +355,9 @@
           let pokeName = this.currentPokemon["name"]
             if(!stateStorage.caughtList.includes(pokeName)){
               stateStorage.caughtList.push(pokeName)
-              alert(pokeName + "  caught!")
+              popUp(pokeName + "  caught!")
             }else{
-                alert(pokeName + "  released into the wild!")
+                popUp(pokeName + "  released into the wild!")
                 stateStorage.caughtList.splice(stateStorage.caughtList.indexOf(pokeName), 1)
             }
             saveLists()

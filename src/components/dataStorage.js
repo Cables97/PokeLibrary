@@ -49,7 +49,7 @@ export function clearLists(){
     localStorage.removeItem('caughtList');
 }
 
-export function alert(msg){
+export function popUp(msg){
     stateStorage.alertMessage = msg
     stateStorage.alertActive = true
     setTimeout(() => {

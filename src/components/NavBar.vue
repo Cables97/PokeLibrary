@@ -121,7 +121,7 @@
 </template>
 
 <script>
-import { stateStorage } from './dataStorage'
+import { stateStorage, popUp } from './dataStorage'
 
 export default {
     
@@ -155,20 +155,20 @@ export default {
         filterType(type) {   
                 this.isActive
                 if(!stateStorage.filterTypeList.includes(type)){
-                    alert("Added " + type + " to filters!")
+                    popUp("Added " + type + " to filters!")
                     stateStorage.filterTypeList.push(type)
                 }else{
-                    alert("Removed " + stat + " to filters!")
+                    popUp("Removed " + stat + " to filters!")
                     stateStorage.filterTypeList.splice(stateStorage.filterTypeList.indexOf(type), 1);
             }
         },
         filterStat(stat) {
             this.isActive
                 if(!stateStorage.filterStatList.includes(stat)){
-                    alert("Added " + stat + " to filters!")
+                    popUp("Added " + stat + " to filters!")
                     stateStorage.filterStatList.push(stat)
                 }else{
-                    alert("Removed " + stat + " to filters!")
+                    popUp("Removed " + stat + " to filters!")
                     stateStorage.filterStatList.splice(stateStorage.filterStatList.indexOf(stat), 1);
                 }
         },
@@ -176,10 +176,10 @@ export default {
             
                 this.isActive
                 if(!stateStorage.filterGenList.includes(gen)){
-                    alert("Added " + gen + " to filters!")
+                    popUp("Added " + gen + " to filters!")
                     stateStorage.filterGenList.push(gen)
                 }else{
-                    alert("Removed " + stat + " to filters!")
+                    popUp("Removed " + stat + " to filters!")
                     stateStorage.filterGenList.splice(stateStorage.filterGenList.indexOf(gen), 1);
                 
             }
@@ -226,7 +226,7 @@ export default {
             }
         },
         caughtFilterToggle(){
-            alert("Caught filter toggled!")
+            popUp("Caught filter toggled!")
             if(stateStorage.filterCaught){
                 stateStorage.filterCaught = false
                 
@@ -234,7 +234,7 @@ export default {
                 stateStorage.filterCaught = true}
         },
         favFilterToggle(){
-            alert("Favorited filter toggled!")
+            popUp("Favorited filter toggled!")
             if(stateStorage.filterFavorite){
                 stateStorage.filterFavorite = false
             } else { 

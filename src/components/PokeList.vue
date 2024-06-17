@@ -40,8 +40,8 @@
 
   </div>
 
-  <div class="alert-box-wrapper" :class="{ 'alert-active' : stateStorage.alertActive }">
-    <AlertBox> </AlertBox>
+  <div class="popUp-box-wrapper" :class="{ 'popUp-active' : stateStorage.popUpActive }">
+    <popUpBox> </popUpBox>
   </div>
   
 
@@ -49,9 +49,9 @@
   
 
 <script>
-  import AlertBox from './AlertBox.vue';
+  import popUpBox from './AlertBox.vue';
   import ModalPop from './ModalPop.vue';
-  import { stateStorage , saveLists , loadLists , logLists , alert } from './dataStorage'
+  import { stateStorage , saveLists , loadLists , logLists , popUp } from './dataStorage'
 
 
   export default {
@@ -120,10 +120,10 @@
           let pokeName = poke["name"]
             if(!stateStorage.favouriteList.includes(pokeName)){
               stateStorage.favouriteList.push(pokeName)
-              alert(pokeName + " has been favourited!")
+              popUp(pokeName + " has been favourited!")
             }else{
                 stateStorage.favouriteList.splice(stateStorage.favouriteList.indexOf(pokeName), 1)
-                alert(pokeName + " removed from favourites!")
+                popUp(pokeName + " removed from favourites!")
             }
             saveLists()
 
@@ -133,10 +133,10 @@
           let pokeName = poke["name"]
             if(!stateStorage.caughtList.includes(pokeName)){
               stateStorage.caughtList.push(pokeName)
-              alert(pokeName + "  caught!")
+              popUp(pokeName + "  caught!")
             }else{
                 stateStorage.caughtList.splice(stateStorage.caughtList.indexOf(pokeName), 1)
-                alert(pokeName + "  released into the wild!")
+                popUp(pokeName + "  released into the wild!")
             }
             saveLists()
         },
@@ -214,7 +214,7 @@
         }, 3000);
       },
 
-      components: { ModalPop, AlertBox }
+      components: { ModalPop, popUpBox }
   }
 </script>
 
@@ -397,7 +397,7 @@
   }
 
 
-  .alert-box-wrapper{
+  .popUp-box-wrapper{
     position: fixed;
     bottom:-100px;
     right:10px;
@@ -405,7 +405,7 @@
   }
 
 
-  .alert-active{
+  .popUp-active{
     bottom:10px;
     right:10px;
   }
