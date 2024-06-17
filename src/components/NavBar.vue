@@ -2,7 +2,7 @@
     <div class="nav">
         
         <nav class="nav-bar">
-            <button class="top-btn">Team</button>
+            <!--<button class="top-btn">Team</button>-->
             <input type="text" name="search-bar" @input="getInput()" id="search-bar" class="search-bar" placeholder="Pokemon Search...">
             <button class="top-btn filter-open-btn" @click="mobileFilterToggle()"><img src="./icons/filter.png" alt=""></button>
         </nav>
@@ -320,8 +320,7 @@ export default {
     font-size: 24px;
     color: var(--text-light);
 }
-.m-nav-close:hover{
-}
+
 
 .filter-container{
     position: absolute;
