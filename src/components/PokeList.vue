@@ -33,9 +33,9 @@
   </div>
   
   <div class="modal-wrapper"  v-if="stateStorage.modalOpen">
-
-    <ModalPop/>
-    
+    <Suspense>
+      <ModalPop/>
+    </Suspense>
     <div class="modal-bg" @click="stateStorage.modalOpen = false"></div>
 
   </div>

@@ -20,8 +20,9 @@ export default {
     <NavBar></NavBar>
   </header>
   <div class="pokemon-list-container">
-    
-    <PokeList />
+    <Suspense>
+      <PokeList />
+    </Suspense>
   </div>
   
 </template>
