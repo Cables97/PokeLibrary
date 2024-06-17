@@ -147,41 +147,39 @@ export default {
 
             isMobileModalOpen: false,
 
-
         };
     },
 
     methods: {
         //filter methods
         filterType(type) {   
-                console.log(type + " toggled")
                 this.isActive
                 if(!stateStorage.filterTypeList.includes(type)){
+                    alert("Added " + type + " to filters!")
                     stateStorage.filterTypeList.push(type)
                 }else{
+                    alert("Removed " + stat + " to filters!")
                     stateStorage.filterTypeList.splice(stateStorage.filterTypeList.indexOf(type), 1);
             }
         },
         filterStat(stat) {
-            
             this.isActive
-                console.log(stat + " toggled")
                 if(!stateStorage.filterStatList.includes(stat)){
+                    alert("Added " + stat + " to filters!")
                     stateStorage.filterStatList.push(stat)
                 }else{
+                    alert("Removed " + stat + " to filters!")
                     stateStorage.filterStatList.splice(stateStorage.filterStatList.indexOf(stat), 1);
                 }
-
-
-            console.log(stateStorage.filterStatList)
         },
         filterGen(gen) {
             
                 this.isActive
-                console.log(gen + " toggled")
                 if(!stateStorage.filterGenList.includes(gen)){
+                    alert("Added " + gen + " to filters!")
                     stateStorage.filterGenList.push(gen)
                 }else{
+                    alert("Removed " + stat + " to filters!")
                     stateStorage.filterGenList.splice(stateStorage.filterGenList.indexOf(gen), 1);
                 
             }
@@ -189,7 +187,6 @@ export default {
         filterEggGroup(group) {
             
                 this.isActive
-                console.log(gen + "toggled")
                 if(!this.filterEggList.includes(gen)){
                     this.filterEggList.push(gen)
                 }else{
@@ -229,19 +226,21 @@ export default {
             }
         },
         caughtFilterToggle(){
+            alert("Caught filter toggled!")
             if(stateStorage.filterCaught){
                 stateStorage.filterCaught = false
+                
             } else { 
                 stateStorage.filterCaught = true}
         },
         favFilterToggle(){
+            alert("Favorited filter toggled!")
             if(stateStorage.filterFavorite){
                 stateStorage.filterFavorite = false
             } else { 
                 stateStorage.filterFavorite = true}
         },
         getInput(){
-            console.log(event.target.value)
             stateStorage.searchQuery = event.target.value.toLowerCase()
         },
 

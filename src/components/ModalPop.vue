@@ -271,8 +271,6 @@
     methods: {
 
         async fetchPokeDex() {
-            console.log('fetch pokemon info');
-            console.log(this.currentPokemon["name"]);
             this.abilityList=[]
 
 
@@ -342,11 +340,12 @@
 
         pushToFavorites(){
           let pokeName = this.currentPokemon["name"]
-          console.log(pokeName + " Favourited!")
             if(!stateStorage.favouriteList.includes(pokeName)){
               stateStorage.favouriteList.push(pokeName)
+              alert(pokeName + " has been favorited!")
             }else{
                 stateStorage.favouriteList.splice(stateStorage.favouriteList.indexOf(pokeName), 1)
+                alert(pokeName + " removed from favorites!")
             }
             saveLists()
 
@@ -354,10 +353,11 @@
 
         pushToCaught(){
           let pokeName = this.currentPokemon["name"]
-          console.log(pokeName + "  Caught!")
             if(!stateStorage.caughtList.includes(pokeName)){
               stateStorage.caughtList.push(pokeName)
+              alert(pokeName + "  caught!")
             }else{
+                alert(pokeName + "  released into the wild!")
                 stateStorage.caughtList.splice(stateStorage.caughtList.indexOf(pokeName), 1)
             }
             saveLists()
@@ -367,8 +367,6 @@
         enAbilities() { // abilitys are sent with multiple languages, need to return english only
             //for each ability 
             this.abilities=[]
-            console.log(this.abilityList)
-            console.log("ability")
             this.abilityList.forEach(ability => {
                 let abilityObj = {
                     "name": "",
@@ -391,17 +389,11 @@
                         abilityObj["flavorText"] = ability["flavor_text_entries"][i]["flavor_text"]
                     }
                 }
-
-                console.log(abilityObj["name"])
-                console.log(abilityObj["flavorText"])
-                console.log(abilityObj["effect"])
                 this.abilities.push(abilityObj)
                 return
             })
             //find name
             //find first effect-entry with english 
-            
-            console.log(this.abilities)
             return this.abilities
         },
         firstAppearance() {
@@ -411,7 +403,6 @@
         evolvesFrom(){
             let pre = this.currPokeSpecies["evolves_from_species"]["name"]
             let find = stateStorage.masterList.findIndex((element) => element.name == pre)
-            console.log()
             if(find > -1){
                 this.missingEvo = false
                 return stateStorage.masterList[find].sprites.front_default
@@ -431,7 +422,6 @@
     },
     
     updated(){
-        console.log('updated')
         setTimeout(() => {
             this.isLoadingModal = false;
         }, 500);
@@ -477,7 +467,6 @@
         margin: auto;
         border-radius: 40px;
         background-image: linear-gradient(1deg, #CCB47FFF 0%, #CCB47FFF 20%, #ffefd5ff 25%, #ffefd5ff 90%, #B1EBFFFF 100%);
-        -webkit-appearance: none;
     }
     .m-modal-img:hover{
         cursor: pointer;
@@ -747,7 +736,6 @@
         margin: auto;
         border-radius: 20px;
         background-image: linear-gradient(1deg, #CCB47FFF 0%, #CCB47FFF 20%, #ffefd5ff 25%, #ffefd5ff 90%, #B1EBFFFF 100%);
-        -webkit-appearance: none;
     }
 
     .modal-img-cry{

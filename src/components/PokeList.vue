@@ -114,15 +114,13 @@
         listClick(poke){
           stateStorage.currentPokemon = poke
           stateStorage.modalOpen = true
-          console.log(poke);
         },
 
         pushToFavorites(poke){
           let pokeName = poke["name"]
             if(!stateStorage.favouriteList.includes(pokeName)){
               stateStorage.favouriteList.push(pokeName)
-              console.log(pokeName + " Favourited!")
-              alert(pokeName + " favourited!")
+              alert(pokeName + " has been favourited!")
             }else{
                 stateStorage.favouriteList.splice(stateStorage.favouriteList.indexOf(pokeName), 1)
                 alert(pokeName + " removed from favourites!")
@@ -208,7 +206,6 @@
         logLists()
         loadLists()
         this.fetchPokemon()
-        console.log(stateStorage.masterList)
       },
 
       mounted() {
