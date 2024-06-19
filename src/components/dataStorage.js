@@ -50,6 +50,7 @@ export function clearLists(){
 }
 
 export function popUp(msg){
+    console.log("alert")
     stateStorage.alertMessage = msg
     stateStorage.alertActive = true
     setTimeout(() => {

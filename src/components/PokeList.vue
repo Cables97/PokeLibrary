@@ -40,7 +40,7 @@
 
   </div>
 
-  <div class="popUp-box-wrapper" :class="{ 'popUp-active' : stateStorage.popUpActive }">
+  <div class="alert-box-wrapper" :class="{ 'alert-active' : stateStorage.alertActive }">
     <popUpBox> </popUpBox>
   </div>
   
@@ -113,6 +113,7 @@
 
         listClick(poke){
           stateStorage.currentPokemon = poke
+          console.log(poke)
           stateStorage.modalOpen = true
         },
 
@@ -337,6 +338,8 @@
     top:0;
     left:0;
     padding:5px 10px;
+    font-family: var(--text-font);
+    font-weight:600;
     border:1px solid rgba(0, 0, 0, .50);
     border-radius: 20px 0 10px 0 ;
     border-top-style: none;
@@ -397,7 +400,7 @@
   }
 
 
-  .popUp-box-wrapper{
+  .alert-box-wrapper{
     position: fixed;
     bottom:-100px;
     right:10px;
@@ -405,7 +408,7 @@
   }
 
 
-  .popUp-active{
+  .alert-active{
     bottom:10px;
     right:10px;
   }

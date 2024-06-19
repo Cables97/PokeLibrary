@@ -79,7 +79,7 @@
             <div class="reset filter-btn" v-if="isResetAll" @click="resetAll"><p>Reset Filters</p><p>✖</p></div>
         </div>
         -->
-        <div class="caught-count" >
+        <div class="caught-count" v-if="stateStorage.caughtList.length >= 1" >
             <p>You've Caught: {{ stateStorage.caughtList.length }} / {{ stateStorage.masterList.length }}</p>
         </div>
 
@@ -106,14 +106,14 @@
                     <p>{{ this.computedStats(stat) }}</p>
                 </div>
             </div>
-
+            <!--
             <h4>First Appearance: </h4>
             <div class="m-select-btns" @mouseover="isOpenGen=true" @mouseout="isOpenGen=false">
                 <div v-for="gen in this.genList" class="type-btn wide-btn base-btn" :class="{'active' : stateStorage.filterGenList.includes(gen)}, gen" @click="filterGen(gen)">
                     <p >Generation {{ gen }}</p>
                 </div>
             </div>
-
+            -->
         </div>
         
         <div class="mf-bg" @click="mobileFilterToggle()"></div>
@@ -132,7 +132,7 @@ export default {
             typeList: ["bug","dark","dragon","electric","fairy","fighting","fire","flying","ghost","grass","ground","ice","normal","poison","psychic","rock","steel","water"],
             isOpenType: false,
 
-            statList: ["hp","attack","defense","special-attack","special-defense","speed"],
+            statList: ["hp","attack","special-attack","speed","defense","special-defense"],
             isOpenStat: false,
 
             genList: ["I","II","III","IV","V","VI","VII","VIII","IX",],
@@ -153,21 +153,25 @@ export default {
     methods: {
         //filter methods
         filterType(type) {   
-                this.isActive
+                
                 if(!stateStorage.filterTypeList.includes(type)){
+                    this.isActive
                     popUp("Added " + type + " to filters!")
                     stateStorage.filterTypeList.push(type)
                 }else{
-                    popUp("Removed " + stat + " to filters!")
+                    !this.isActive
+                    popUp("Removed " + type + " to filters!")
                     stateStorage.filterTypeList.splice(stateStorage.filterTypeList.indexOf(type), 1);
             }
         },
         filterStat(stat) {
-            this.isActive
                 if(!stateStorage.filterStatList.includes(stat)){
+                    this.isActive
                     popUp("Added " + stat + " to filters!")
                     stateStorage.filterStatList.push(stat)
                 }else{
+                    
+                    !this.isActive
                     popUp("Removed " + stat + " to filters!")
                     stateStorage.filterStatList.splice(stateStorage.filterStatList.indexOf(stat), 1);
                 }
@@ -538,7 +542,7 @@ export default {
 }
 
 .filter-open-btn img{
-    filter: invert(80%);
+    filter: invert(100%);
 }
 
 

@@ -69,6 +69,15 @@
 
 }
 
+@media (prefers-color-scheme: light) {
+ 
+
+  .filter-open-btn{
+    filter: invert(100%);
+    
+}
+
+}
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -103,7 +112,16 @@
     --text-sub:rgb(83, 83, 1083);
 
   }
+
+  .filter-open-btn{
+    filter: contrast(800%);
+    
 }
+
+}
+
+
+
 
 *,
 *::before,
@@ -144,8 +162,12 @@ body {
   cursor: pointer;
 }
 
-.attack{ background-color:#10008DFF }
-.defense{ }
+.hp{background-color: #f583b3;}
+.attack{ background-color:#f4b994 }
+.special-attack{ background-color: #ee9b69;}
+.speed{ background-color: #d1dbe2;}
+.defense{ background-color:  #b3dcd1;}
+.special-defense{ background-color: #7fbeaf}
 
 
 .normal{

@@ -24,7 +24,7 @@
                 </div>
                 
                 <h1 class="modal-name">{{ this.currentPokemon["name"] }}</h1>
-                <h3 class="modal-subname">{{ this.currPokeSpecies["genera"][7]["genus"] }}</h3>
+                <h3 class="modal-subname" >{{  this.currPokeSpecies["genera"][7]["genus"]  }}</h3>
 
                 <div class="modal-section flavor">
                     <p>{{ this.currPokeSpecies.flavor_text_entries[2].flavor_text }}</p>
@@ -169,7 +169,7 @@
                 </div>
                 
                 <h1 class="modal-name">{{ this.currentPokemon["name"] }}</h1>
-                <h3 class="modal-subname">{{ this.currPokeSpecies["genera"][7]["genus"] }}</h3>
+                <h3 class="modal-subname">{{ this.currPokeSpecies["genera"][7]["genus"] || "???"}}</h3>
 
                 <div class="modal-types">
                     <div v-for="type in this.currentPokemon.types" :key="type.type.name" :class="type.type.name" class="type-btn">
@@ -272,9 +272,13 @@
 
         async fetchPokeDex() {
             this.abilityList=[]
+            let pokemonName = this.currentPokemon["name"]
 
+            if(this.currentPokemon["name"] == "deoxys-normal"){
+                pokemonName = "deoxys"
+            }
 
-            const species = await fetch("https://pokeapi.co/api/v2/pokemon-species/" + this.currentPokemon["name"])
+            const species = await fetch("https://pokeapi.co/api/v2/pokemon-species/" + pokemonName)
             const specData = await species.json()
                   this.currPokeSpecies = specData
 
@@ -410,7 +414,8 @@
                 return this.missingEvo = true
             }
 
-        }
+        },
+
     },
     beforeMount() {
         this.fetchPokeDex();
@@ -427,7 +432,9 @@
         }, 500);
         
 
-    }
+    },
+
+
 }
 </script>
 
@@ -719,9 +726,6 @@
         row-gap: 10px;
         margin:20px auto;
     }
-    .cap{
-        text-transform: uppercase;
-    }
 
 
 /* Modal Img + Cry */
@@ -926,17 +930,35 @@
         opacity: 50%;
     }
 
-
-
+    .cap{
+        text-transform: uppercase;
+    }
 
 /* Mobile- */
-@media only screen and (max-width: 600px) {
- .modal-wrapper-mobile{
-    display:inherit;
- }
- .modal-wrapper-desk{
-    display:none;
- }
+@media only screen and (max-height: 900px){
+    .modal-wrapper-mobile{
+        margin-top:100px;
+    }
+    .modal-wrapper-desk{
+        margin-top:70px;
+    }
+
+
+}
+
+/* Mobile- */
+@media only screen and (max-width: 601px){
+    .modal-wrapper-mobile{
+        display:inherit;
+    }
+    .modal-wrapper-desk{
+        display:none;
+    }
+
+    
+    .modal-name{
+            font-size: 46px;
+}
 
 }
 /* Mobile+ */
@@ -945,6 +967,7 @@
         height:800px;
         width:600px;
     }
+
     .modal-loading{
         height:100%;
         width:100%;
@@ -956,6 +979,10 @@
     }
     .modal-wrapper-mobile{
         display:none;
+    }
+
+    .modal-name{
+        font-size: 40px;
     }
 
 }
@@ -974,7 +1001,6 @@
 
     .modal-name{
         font-size: 50px;
-
     }
         
     .modal-wrapper{

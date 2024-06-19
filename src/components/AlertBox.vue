@@ -39,5 +39,9 @@ export default {
     background-color: var(--card-background);
     box-shadow: 4px 4px 10px 0 var(--card-shadow), 0 0 10px rgba(0, 0, 0, .1) inset;
 }
+.alert-box > p::first-letter {
+    text-transform: capitalize;
+
+}
 
 </style>
