@@ -387,6 +387,7 @@
   }
     
   .pokemon-card:hover{
+    cursor: pointer;
     transform: scale(105%);
     box-shadow: 6px 6px 10px 0 var(--card-shadow);
   }
